@@ -30,13 +30,14 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 	int userid = event.GetInt("subject");
 	int client = GetClientOfUserId(userid);
 	int RNGRoll = GetRandomInt(1, 10);
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1)
+	if(CheckValidClient(client) && GetClientTeam(client) == 2) //&& RNGRoll == 1)
 	{
 		float EngineTime = GetEngineTime() + 10.0;
 		DataPack pack;
 		CreateDataTimer(0.1, Timer_MetalMario, pack, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 		pack.WriteCell(client);
 		pack.WriteFloat(EngineTime);
+		SetEntityRenderColor(client, 0, 0, 0, 255);
 		PrintHintText(client, "You rolled: Metal Mario!");
 		PrintToChat(client, "You rolled: Metal Mario!");
 		//Play Multiple times and in different channels to make it louder
@@ -136,6 +137,16 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		FakeClientCommand(client, "z_spawn_old mob");
 		EmitSoundToAll("player/survivor/voice/manager/spotpills01.wav", client);
 		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
+	/*	int wEntIndex = CreateEntityByName("infected");
+			float location[3];
+			GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
+			location[2] += 80;
+			TeleportEntity(wEntIndex, location, NULL_VECTOR, NULL_VECTOR);
+			DispatchSpawn(wEntIndex);
+			ActivateEntity(wEntIndex);
+		SetEntityModel(wEntIndex, "models/survivors/survivor_manager.mdl");
+		SetEntityRenderMode(wEntIndex, RENDER_TRANSCOLOR);
+		SetEntityRenderColor(client, 255, 0, 0, 255);*/
 		PrintHintText(client, "You rolled: Pills here!");
 		PrintToChat(client, "You rolled: Pills here!");
 		DataPack pack;
@@ -146,7 +157,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 	{
 		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
 		PrintToServer("Client %N picked up the gnome for the first time", client);
-		int RNGGnome = GetRandomInt(1, 2);
+		int RNGGnome = GetRandomInt(1, 25);
 		
 		if(RNGGnome == 1)
 		{
@@ -354,7 +365,7 @@ public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadc
 	int RNG = GetRandomInt(1, 500);
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
-	{		
+	{	
 		ServerCommand("sm_slap \"#%N\" 0", client);
 		ServerCommand("sm_slap \"#%N\" 0", client);
 		ServerCommand("sm_slap \"#%N\" 0", client);
@@ -430,4 +441,22 @@ public Action Event_PlayerSpawn(Event event, const char[] sName, bool bDontBroad
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	SetClientCookie(client, g_GnomePickUpCookie, "");
+}
+/*
+public Action Event_TankSpawn(Event event, const char[] Name, bool bDontBroadcast)
+{
+	int tank = GetClientOfUserId(event.GetInt("userid"));
+	SetEntityModel(tank, "models/survivors/survivor_manager.mdl");
+}*/
+
+public Action Event_BotPlayerReplace(Event event, const char[] Name, bool bDontBroadcast)
+{
+	int client = GetClientOfUserId(event.GetInt("player"));
+	char cookie[8];
+	GetClientCookie(client, g_GnomePickUpCookie, cookie, sizeof(cookie));
+	if(!StrEqual(cookie, "gnome", false))
+	{
+		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
+		PrintToServer("Set %N gnome cookie back to gnome", client);
+	}
 }

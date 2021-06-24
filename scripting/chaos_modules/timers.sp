@@ -36,16 +36,16 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 	int client = pack.ReadCell();
 	float EngineTime = pack.ReadFloat();
 	
-	int RNGRoll = GetRandomInt(1, 50);
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && GetEngineTime() < EngineTime)
 	{
-		SetEntProp(client, Prop_Send, "m_iHealth", RNGRoll);
+		SetEntProp(client, Prop_Send, "m_iHealth", 10000);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
 	}
 	else if (CheckValidClient(client) && GetClientTeam(client) == 2)
 	{
 		ServerCommand("sm_mortal \"#%N\"", client);
 		SetEntProp(client, Prop_Send, "m_iHealth", 50);
+		SetEntityRenderColor(client, 255, 255, 255, 255);
 		PrintHintText(client, "Metal Mario Expired!");
 		PrintToChat(client, "Metal Mario Expired!");
 		return Plugin_Stop;
@@ -123,12 +123,15 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 	gnomeStar.ReadString(SactiveWeapon, sizeof(SactiveWeapon));
 	int activeWeapon = StringToInt(SactiveWeapon);
 	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
-	int RNGHealth = GetRandomInt(1, 50);
+	int RNGRed = GetRandomInt(1, 255);
+	int RNGGreen = GetRandomInt(1, 255);
+	int RNGBlue = GetRandomInt(1, 255);
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && activeWeapon == currentActiveWeapon)
 	{
-		SetEntProp(client, Prop_Send, "m_iHealth", RNGHealth);
+		SetEntProp(client, Prop_Send, "m_iHealth", 10000);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
 		SetEntPropFloat(client, Prop_Send, "m_healthBufferTime", GetGameTime());
+		SetEntityRenderColor(client, RNGRed, RNGGreen, RNGBlue, 255);
 	}
 	else
 	{
@@ -137,6 +140,7 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 		PrintToChat(client, "You dropped the gnome! Invincibility expired!");
 		SetEntProp(client, Prop_Send, "m_iHealth", 100);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
+		SetEntityRenderColor(client, 255, 255, 255, 255);
 		StopSound(client, 100, "kingo_chaos_edition/gnome_starman.mp3");
 		StopSound(client, 102, "kingo_chaos_edition/gnome_starman.mp3");
 		StopSound(client, 103, "kingo_chaos_edition/gnome_starman.mp3");
