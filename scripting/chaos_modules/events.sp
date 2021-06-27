@@ -83,8 +83,8 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 		if(incapCount == 1)
 		{
 			SetEntProp(victim , Prop_Send, "m_isGoingToDie", 1); //Vocalization of survivor voice responses
-			SetEntProp(client, Prop_Send, "m_bIsOnThirdStrike", 1); //Visual B&W effect for client
-			for (new i = 1; i <= MaxClients; ++i)
+			SetEntProp(victim, Prop_Send, "m_bIsOnThirdStrike", 1); //Visual B&W effect for client
+			for (int i = 1; i <= MaxClients; ++i)
 			{
 				if(i >= 1 && i <= MaxClients && IsClientInGame(i) && GetClientTeam(i) == 2 && !IsFakeClient(i)) //Only send hintbox to Survivors (and not bots) and not infected!!!
 				{
@@ -105,13 +105,13 @@ public Action Event_WitchKilled(Event event, const char[] sName, bool bDontBroad
 		if(RNG == 2)
 		{
 			PrintToChatAll("Witch Crowned");
-			new comFlags = GetCommandFlags("z_spawn_old"); 
+			int comFlags = GetCommandFlags("z_spawn_old"); 
 			SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
 			FakeClientCommand(client, "z_spawn_old tank"); 
 			SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
 			PrintHintText(client, "You rolled: Witch revenge!");
 			PrintToChat(client, "You rolled: Witch revenge!");
-			for (new i = 1; i <= MaxClients; ++i)
+			for (int i = 1; i <= MaxClients; ++i)
 			{
 				if(i >= 1 && i <= MaxClients && IsClientInGame(i) && GetClientTeam(i) == 2 && !IsFakeClient(i))
 				{
@@ -132,7 +132,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 	int RNG = GetRandomInt(1, 4);
 	if(StrEqual(item, "pain_pills") && CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
 	{
-		new comFlags = GetCommandFlags("z_spawn_old"); 
+		int comFlags = GetCommandFlags("z_spawn_old"); 
 		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
 		FakeClientCommand(client, "z_spawn_old mob");
 		EmitSoundToAll("player/survivor/voice/manager/spotpills01.wav", client);
@@ -218,7 +218,7 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 	bool sDoor = event.GetBool("checkpoint");
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1 && !sDoor)
 	{
-		new comFlags = GetCommandFlags("z_spawn_old"); 
+		int comFlags = GetCommandFlags("z_spawn_old"); 
 		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
 		FakeClientCommand(client, "z_spawn_old tank");
 		FakeClientCommand(client, "z_spawn_old tank");
@@ -255,7 +255,7 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 	}
 	else if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGSDoor == 1 && sDoor)
 	{
-		new comFlags = GetCommandFlags("z_spawn_old"); 
+		int comFlags = GetCommandFlags("z_spawn_old"); 
 		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
 		FakeClientCommand(client, "z_spawn_old tank");
 		FakeClientCommand(client, "z_spawn_old tank");
@@ -281,7 +281,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 		char ak47[32] = "weapon_rifle_ak47";
 		L4D2_SetFloatWeaponAttribute(ak47, L4D2FWA_CycleTime, 20.0);
 		CreateTimer(20.0, ResetAKJam);
-		for (new i = 1; i <= MaxClients; ++i)
+		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
 			{
@@ -293,7 +293,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	else if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && RNGAWP == 1 && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) != 10000)
 	{
 		CreateTimer(0.1, SetAWP);
-		for (new i = 1; i <= MaxClients; ++i)
+		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
 			{
@@ -305,7 +305,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	else if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) == 10000)
 	{
 		CreateTimer(0.1, ResetAWP);
-		for (new i = 1; i <= MaxClients; ++i)
+		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
 			{
@@ -401,10 +401,10 @@ public Action Event_SurvivorRescued(Event event, const char[] sName, bool bDontB
 {
 	int victim = GetClientOfUserId(event.GetInt("victim"));
 	int RNG = GetRandomInt(1, 5);
-	CreateTimer(0.1, Timer_GnomeStarRescued, EntIndexToEntRef(victim))
+	CreateTimer(0.1, Timer_GnomeStarRescued, EntIndexToEntRef(victim));
 	if(RNG == 1)
 	{
-		new comFlags = GetCommandFlags("z_spawn_old"); 
+		int comFlags = GetCommandFlags("z_spawn_old"); 
 		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
 		FakeClientCommand(victim, "z_spawn_old boomer"); 
 		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
@@ -418,7 +418,7 @@ public Action Event_BoomerExploded(Event event, const char[] sName, bool bDontBr
 	int RNG = GetRandomInt(1, 15);
 	if(CheckValidClient(attacker) && RNG == 1)
 	{
-		new comFlags = GetCommandFlags("give"); 
+		int comFlags = GetCommandFlags("give"); 
 		SetCommandFlags("give", comFlags & ~FCVAR_CHEAT); 
 		FakeClientCommand(boomer, "give weapon_vomitjar");
 		FakeClientCommand(boomer, "give weapon_vomitjar");

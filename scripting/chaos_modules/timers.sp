@@ -88,7 +88,7 @@ public Action ResetAKJam(Handle AKTimer)
 {
 	char wak47[32] = "weapon_rifle_ak47";
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
-	for (new i = 1; i <= MaxClients; ++i)
+	for (int i = 1; i <= MaxClients; ++i)
 	{
 		if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == 2)
 		{
@@ -100,8 +100,8 @@ public Action ResetAKJam(Handle AKTimer)
 //Starman gnome pickup roll replay theme if gnome is still held
 public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 {
-	gnomeStar.Reset()
-	int client = gnomeStar.ReadCell()
+	gnomeStar.Reset();
+	int client = gnomeStar.ReadCell();
 	char SactiveWeapon[64];
 	gnomeStar.ReadString(SactiveWeapon, sizeof(SactiveWeapon));
 	int activeWeapon = StringToInt(SactiveWeapon);
@@ -117,8 +117,8 @@ public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 //Gnome Starman Randomized Health/Stop timer
 public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 {
-	gnomeStar.Reset()
-	int client = gnomeStar.ReadCell()
+	gnomeStar.Reset();
+	int client = gnomeStar.ReadCell();
 	char SactiveWeapon[64];
 	gnomeStar.ReadString(SactiveWeapon, sizeof(SactiveWeapon));
 	int activeWeapon = StringToInt(SactiveWeapon);
