@@ -2,12 +2,15 @@
 #include <sdktools>
 #include <left4dhooks>
 #include <clientprefs>
+
+#pragma semicolon 1
+#pragma newdecls required
 #include <chaos_modules/cvars.sp>
 #include <chaos_modules/stocks.sp> 
 #include <chaos_modules/events.sp>
 #include <chaos_modules/timers.sp>
 
-#pragma semicolon 1
+
 
 public Plugin myinfo = 
 {
