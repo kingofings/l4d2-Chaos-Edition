@@ -8,10 +8,15 @@ public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadc
 	ServerCommand("sm_mortal @all");
 	for(int client = 1; client <= MaxClients; ++client)
 	{
-		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && g_GnomePickUpCookie != null)
+		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && g_GnomePickUpCookie != INVALID_HANDLE)
 		{
 			SetClientCookie(client, g_GnomePickUpCookie, "");
 		}
+		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && g_CursedCookie != INVALID_HANDLE)
+		{
+			SetClientCookie(client, g_CursedCookie, "");
+		}
+		
 	}	
 }
 
@@ -104,11 +109,9 @@ public Action Event_WitchKilled(Event event, const char[] sName, bool bDontBroad
 	{
 		if(RNG == 2)
 		{
-			PrintToChatAll("Witch Crowned");
-			int comFlags = GetCommandFlags("z_spawn_old"); 
-			SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
-			FakeClientCommand(client, "z_spawn_old tank"); 
-			SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
+			float location[3];
+			GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
+			L4D2_SpawnTank(location, NULL_VECTOR);
 			PrintHintText(client, "You rolled: Witch revenge!");
 			PrintToChat(client, "You rolled: Witch revenge!");
 			for (int i = 1; i <= MaxClients; ++i)
@@ -137,16 +140,6 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		FakeClientCommand(client, "z_spawn_old mob");
 		EmitSoundToAll("player/survivor/voice/manager/spotpills01.wav", client);
 		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
-	/*	int wEntIndex = CreateEntityByName("infected");
-			float location[3];
-			GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
-			location[2] += 80;
-			TeleportEntity(wEntIndex, location, NULL_VECTOR, NULL_VECTOR);
-			DispatchSpawn(wEntIndex);
-			ActivateEntity(wEntIndex);
-		SetEntityModel(wEntIndex, "models/survivors/survivor_manager.mdl");
-		SetEntityRenderMode(wEntIndex, RENDER_TRANSCOLOR);
-		SetEntityRenderColor(client, 255, 0, 0, 255);*/
 		PrintHintText(client, "You rolled: Pills here!");
 		PrintToChat(client, "You rolled: Pills here!");
 		DataPack pack;
@@ -200,7 +193,9 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	int RNG = GetRandomInt(1, 5);
+	char cookie[8];
+	GetClientCookie(client, g_CursedCookie, cookie, sizeof(cookie));
+	int RNG = GetRandomInt(1, 6);
 	
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
 	{
@@ -208,6 +203,15 @@ public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBr
 		PrintHintText(client, "You rolled: Heart attack!");
 		PrintToChat(client, "You rolled: Heart attack!");
 	}
+	if(CheckValidClient(client) && GetClientTeam(client) == 2 && !StrEqual(cookie, "cursed", false) && RNG == 2)
+	{
+		SetClientCookie(client, g_CursedCookie, "cursed");
+		CreateTimer(10.0, Timer_RemoveCursed, EntIndexToEntRef(client));
+		PrintHintText(client, "You rolled: Cursed!");
+		PrintToChat(client, "You rolled: Cursed!");
+	}
+	
+	
 }
 
 public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcast)
@@ -218,53 +222,39 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 	bool sDoor = event.GetBool("checkpoint");
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1 && !sDoor)
 	{
-		int comFlags = GetCommandFlags("z_spawn_old"); 
-		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
+		float location[3];
+		GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
+		int tank[4];
+		tank[0] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[1] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[2] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[3] = L4D2_SpawnTank(location, NULL_VECTOR);
 		PrintHintText(client, "You rolled: Jumpscare!");
 		PrintToChat(client, "You rolled: Jumpscare!");
-		CreateTimer(1.0, KillJumpscare);
-		//May be used later currently broken
-		/*int tank1 = CreateEntityByName("tank");
-		int tank2 = CreateEntityByName("tank");
-		int tank3 = CreateEntityByName("tank");
-		int tank4 = CreateEntityByName("tank");
-		if(!SetTeleportEndPoint(client))
-		{
-			PrintToServer("Client %N triggered jumpscare but tanks would spawn at invalid position! Ignoring", client);
-		}
-		else
-		{
-			DispatchSpawn(tank1);
-			g_pos[2] += 10.0;
-			TeleportEntity(tank1, g_pos, NULL_VECTOR, NULL_VECTOR);
-			DispatchSpawn(tank2);
-			g_pos[2] += 10.0;
-			TeleportEntity(tank2, g_pos, NULL_VECTOR, NULL_VECTOR);
-			DispatchSpawn(tank3);
-			g_pos[2] += 10.0;
-			TeleportEntity(tank3, g_pos, NULL_VECTOR, NULL_VECTOR);
-			DispatchSpawn(tank4);
-			g_pos[2] += 10.0;
-			TeleportEntity(tank4, g_pos, NULL_VECTOR, NULL_VECTOR);
-		}*/
+		DataPack jumpscare;
+		CreateDataTimer(1.0, Timer_KillJumpscare, jumpscare);
+		jumpscare.WriteCell(tank[0]);
+		jumpscare.WriteCell(tank[1]);
+		jumpscare.WriteCell(tank[2]);
+		jumpscare.WriteCell(tank[3]);
 	}
 	else if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGSDoor == 1 && sDoor)
 	{
-		int comFlags = GetCommandFlags("z_spawn_old"); 
-		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		FakeClientCommand(client, "z_spawn_old tank");
-		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
+		float location[3];
+		GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
+		int tank[4];
+		tank[0] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[1] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[2] = L4D2_SpawnTank(location, NULL_VECTOR);
+		tank[3] = L4D2_SpawnTank(location, NULL_VECTOR);
 		PrintHintText(client, "You rolled: Jumpscare!");
 		PrintToChat(client, "You rolled: Jumpscare!");
-		CreateTimer(1.0, KillJumpscare);
+		DataPack jumpscare;
+		CreateDataTimer(1.0, Timer_KillJumpscare, jumpscare);
+		jumpscare.WriteCell(tank[0]);
+		jumpscare.WriteCell(tank[1]);
+		jumpscare.WriteCell(tank[2]);
+		jumpscare.WriteCell(tank[3]);
 	}
 }
 
@@ -274,6 +264,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	char weapon[32];
 	int RNG = GetRandomInt(1, 500);
 	int RNGAWP = GetRandomInt(1, 50);
+	int RNGCrit = GetRandomInt(1, 50);
 	event.GetString("weapon", weapon, sizeof(weapon));
 	//ak jam
 	if(StrEqual(weapon, "rifle_ak47") && RNG == 1 && CheckValidClient(client))
@@ -290,7 +281,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 			}
 		}
 	}
-	else if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && RNGAWP == 1 && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) != 10000)
+	if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && RNGAWP == 1 && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) != 10000)
 	{
 		CreateTimer(0.1, SetAWP);
 		for (int i = 1; i <= MaxClients; ++i)
@@ -302,7 +293,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 			}
 		}	
 	}
-	else if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) == 10000)
+	if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) == 10000)
 	{
 		CreateTimer(0.1, ResetAWP);
 		for (int i = 1; i <= MaxClients; ++i)
@@ -314,7 +305,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 			}
 		}
 	}
-	else if(StrEqual(weapon, "pistol_magnum") && CheckValidClient(client))
+	if(StrEqual(weapon, "pistol_magnum") && CheckValidClient(client))
 	{
 		int forceSwap = GetPlayerWeaponSlot(client, 0);
 		int slot = GetPlayerWeaponSlot(client, 1);
@@ -339,6 +330,16 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 			RemovePlayerItem(client, slot);
 			AcceptEntityInput(slot, "Kill");
 		}
+	}
+	if(StrEqual(weapon, "grenade_launcher") && CheckValidClient(client) && RNGCrit == 1)
+	{
+		PrintHintText(client, "You rolled: Random Crit!");
+		PrintToChat(client, "You rolled: Random Crit!");
+		SetCritGrenade(1200);
+		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		CreateTimer(3.9, Timer_ResetCrit);
 	}
 }
 
@@ -404,10 +405,9 @@ public Action Event_SurvivorRescued(Event event, const char[] sName, bool bDontB
 	CreateTimer(0.1, Timer_GnomeStarRescued, EntIndexToEntRef(victim));
 	if(RNG == 1)
 	{
-		int comFlags = GetCommandFlags("z_spawn_old"); 
-		SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
-		FakeClientCommand(victim, "z_spawn_old boomer"); 
-		SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
+		float location[3];
+		GetEntPropVector(victim, Prop_Send, "m_vecOrigin", location);
+		L4D2_SpawnSpecial(ZC_BOOMER, location, NULL_VECTOR);
 	}
 }
 //Karma (Exploded boomer "explodes into bilejars")

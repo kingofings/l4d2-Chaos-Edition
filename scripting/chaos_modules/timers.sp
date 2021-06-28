@@ -67,9 +67,18 @@ public Action PlayPillLaugh(Handle LTimer, DataPack pack)
 	EmitSoundToAll("player/survivor/voice/manager/taunt07.wav", client);
 }
 
-public Action KillJumpscare(Handle Khandle)
+public Action Timer_KillJumpscare(Handle Khandle, DataPack jumpscare)
 {
-	ServerCommand("sm_slay @tanks");
+	int tank[4];
+	jumpscare.Reset();
+	tank[0] = jumpscare.ReadCell();
+	tank[1] = jumpscare.ReadCell();
+	tank[2] = jumpscare.ReadCell();
+	tank[3] = jumpscare.ReadCell();
+	ServerCommand("sm_slay \"#%N\"", tank[0]);
+	ServerCommand("sm_slay \"#%N\"", tank[1]);
+	ServerCommand("sm_slay \"#%N\"", tank[2]);
+	ServerCommand("sm_slay \"#%N\"", tank[3]);
 }
 
 public Action SetAWP(Handle SAWPTimer)
@@ -165,4 +174,15 @@ public Action Timer_GnomeStarRescued(Handle RescuedGnomeStar, any clientid)
 		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
 		PrintToServer("Set %N gnome cookie back to gnome", client);
 	}
+}
+
+public Action Timer_ResetCrit(Handle HResetCrit)
+{
+	UnSetCritGrenade(400);
+}
+//Cursed
+public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
+{
+	int client = EntRefToEntIndex(clientid);
+	SetClientCookie(client, g_CursedCookie, "");
 }

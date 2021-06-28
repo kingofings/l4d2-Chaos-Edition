@@ -2,6 +2,7 @@
 #include <sdktools>
 #include <left4dhooks>
 #include <clientprefs>
+#include <datapack>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -9,6 +10,7 @@
 #include <chaos_modules/stocks.sp> 
 #include <chaos_modules/events.sp>
 #include <chaos_modules/timers.sp>
+#include <chaos_modules/commands.sp>
 
 
 
@@ -47,6 +49,7 @@ public void OnPluginEnd()
 		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && IsPlayerAlive(client) && g_GnomePickUpCookie != null)
 		{
 			SetClientCookie(client, g_GnomePickUpCookie, "");
+			SetClientCookie(client, g_CursedCookie, "");
 		}
 	}
 }
@@ -63,6 +66,8 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/gnome_starman.mp3");
 	PrecacheSound("kingo_chaos_edition/yeet.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/yeet.mp3");
+	PrecacheSound("kingo_chaos_edition/crit_grenade_launcher.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
 	
 	char wak47[32] = "weapon_rifle_ak47";
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
@@ -71,6 +76,7 @@ public void OnMapStart()
 	g_GnomePickUpCookie = RegClientCookie("gnome Cookie", "keeps track if player picked up the gnome before", CookieAccess_Private);
 	for (int client = 1; client <= MaxClients; ++client)
 	{
+		SetClientCookie(client, g_GnomePickUpCookie, "");
 		SetClientCookie(client, g_GnomePickUpCookie, "");
 	}
 	
@@ -88,9 +94,15 @@ public void OnMapEnd()
 		CloseHandle(H_StarManReapply);
 		H_StarManReapply = INVALID_HANDLE;
 	}
+	if(g_CursedCookie != INVALID_HANDLE)
+	{
+		CloseHandle(g_CursedCookie);
+		g_CursedCookie = INVALID_HANDLE;
+	}
 }
 
 public void OnClientConnected(int client)
 {
 	SetClientCookie(client, g_GnomePickUpCookie, "");
+	SetClientCookie(client, g_CursedCookie, "");
 }
