@@ -20,3 +20,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - CSGO AWP, Chance to make the next AWP shot by any survivor to deal 10000 Damage
 - Starman Gnome, Chance to get godmode when pickin up a gnome and keep it until you drop it (you can only try to roll it once in a round if you pick it up and nothing     happens you will not be able to get it at all for the rest of the round)
 - Witch Revenge, Chance to spawn a tank when crowning a witch
+
+# Dependencies
+
+-  Left 4 DHooks Direct https://forums.alliedmods.net/showthread.php?t=321696
