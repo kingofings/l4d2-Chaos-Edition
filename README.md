@@ -14,11 +14,11 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Eye for an Eye, Chance to swap places with an incapped player if you cancel the revive
 - Miracle, Chance to immediately get revived and back to full health if you get incapped (does not work if B&W)
 - Yeet, Chance to get launched into a random direction when jumping
-- Unwanted visito, Chance for a boomer to spawn if you rescue a survivor
+- Unwanted visitor, Chance for a boomer to spawn if you rescue a survivor
 - Jammed AK, Chance for all Survivors AK47 to get jammed for 20 Seconds
 - Noodle arms, Chance to drop a magnum when shooting
 - CSGO AWP, Chance to make the next AWP shot by any survivor to deal 10000 Damage
-- Starman Gnome, Chance to get godmode when pickin up a gnome and keep it until you drop it (you can only try to roll it once in a round if you pick it up and nothing     happens you will not be able to get it at all for the rest of the round)
+- Starman Gnome, Chance to get godmode when picking up a gnome and keep it until you drop it (you can only try to roll it once in a round if you pick it up and nothing     happens you will not be able to get it at all for the rest of the round)
 - Witch Revenge, Chance to spawn a tank when crowning a witch
 - Random Crit, Chance for a Grenade launcher to deal 3x damage,
 - Cursed, Chance to get inverted controls when using adrenaline
