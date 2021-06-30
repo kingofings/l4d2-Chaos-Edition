@@ -1,8 +1,4 @@
-### SourcePawn ###
-# SourcePawn
-*.smx # plugins
-*.inc # includes
-*.exe # spcompiler
-scripting/include/@shqke/util/clients.inc
+
 *.inc
+*.smx
 *.exe
