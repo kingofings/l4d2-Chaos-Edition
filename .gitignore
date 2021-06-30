@@ -1,5 +1,5 @@
 ### SourcePawn ###
 # SourcePawn
-scripting/*.smx # plugins
-scripting/include/*.inc # includes
-scripting/spcomp.exe # compiler
+*.smx # plugins
+*.inc # includes
+*.exe # compiler
