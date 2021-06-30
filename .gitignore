@@ -2,4 +2,4 @@
 # SourcePawn
 *.smx # plugins
 *.inc # includes
-*.exe # compiler
+*.exe # spcompiler
