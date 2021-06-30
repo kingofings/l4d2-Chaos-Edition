@@ -22,6 +22,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Witch Revenge, Chance to spawn a tank when crowning a witch
 - Random Crit, Chance for a Grenade launcher to deal 3x damage,
 - Cursed, Chance to get inverted controls when using adrenaline
+- No Jockey Resistance, Chance for a Jockey to fully remove the Survivors resistance when pouncing them.
 
 # Dependencies
 
