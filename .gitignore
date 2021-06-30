@@ -2,4 +2,4 @@
 # SourcePawn
 scripting/*.smx # plugins
 scripting/include/*.inc # includes
-scripting/*.exe # compiler
+scripting/spcomp.exe # compiler
