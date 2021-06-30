@@ -35,7 +35,7 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 	int userid = event.GetInt("subject");
 	int client = GetClientOfUserId(userid);
 	int RNGRoll = GetRandomInt(1, 10);
-	if(CheckValidClient(client) && GetClientTeam(client) == 2) //&& RNGRoll == 1)
+	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1)
 	{
 		float EngineTime = GetEngineTime() + 10.0;
 		DataPack pack;
@@ -458,5 +458,28 @@ public Action Event_BotPlayerReplace(Event event, const char[] Name, bool bDontB
 	{
 		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
 		PrintToServer("Set %N gnome cookie back to gnome", client);
+	}
+}
+//Carnival Ride
+public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadcast)
+{
+	int attacker = GetClientOfUserId(event.GetInt("userid"));	
+	int RNG = GetRandomInt(1, 10);
+	
+	if(RNG == 1 && CheckValidClient(attacker))
+	{
+		float EngineTime = GetEngineTime() + 20.0;
+		L4D2_SetJockeyControlMax(1.0);
+		L4D2_SetJockeyControlMin(1.0);
+		L4D2_SetJockeyControlVar(0.0);
+		DataPack carnivalRide;
+		CreateDataTimer(0.0 , Timer_ResetCarnivalRide, carnivalRide, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);	
+		carnivalRide.WriteCell(attacker);
+		carnivalRide.WriteFloat(EngineTime);
+		PrintHintTextToAll("Infected rolled: No Jockey Resistance for 20 seconds!");
+		PrintToChatAll("Infected rolled: No Jockey Resistance for 20 seconds!");
+		EmitSoundToAll("music/gallery_music.mp3", attacker, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("music/gallery_music.mp3", attacker, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("music/gallery_music.mp3", attacker, 102, SNDLEVEL_GUNFIRE, _, 1.0);
 	}
 }

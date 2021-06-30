@@ -186,3 +186,36 @@ public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
 	int client = EntRefToEntIndex(clientid);
 	SetClientCookie(client, g_CursedCookie, "");
 }
+
+//Carnival Ride
+public Action Timer_ResetCarnivalRide(Handle HRestoreJResist, DataPack carnivalRide)
+{
+	carnivalRide.Reset();
+	int attacker = carnivalRide.ReadCell();
+	float EngineTime = carnivalRide.ReadFloat();
+	if(!CheckValidClient(attacker))
+	{
+		L4D2_RestoreJockeyControlMax();
+		L4D2_RestoreJockeyControlMin();
+		L4D2_RestoreJockeyControlVar();
+		PrintHintTextToAll("No Jockey Resistance expired, Jockey died!");
+		PrintToChatAll("No Jockey Resistance expired, Jockey died!");
+		StopSound(attacker, 100, "music/gallery_music.mp3");
+		StopSound(attacker, 101, "music/gallery_music.mp3");
+		StopSound(attacker, 102, "music/gallery_music.mp3");
+		return Plugin_Stop;
+	}
+	else if(CheckValidClient(attacker) && GetEngineTime() >= EngineTime)
+	{
+		L4D2_RestoreJockeyControlMax();
+		L4D2_RestoreJockeyControlMin();
+		L4D2_RestoreJockeyControlVar();
+		PrintHintTextToAll("No Jockey Resistance expired!");
+		PrintToChatAll("No Jockey Resistance expired!");
+		StopSound(attacker, 100, "music/gallery_music.mp3");
+		StopSound(attacker, 101, "music/gallery_music.mp3");
+		StopSound(attacker, 102, "music/gallery_music.mp3");
+		return Plugin_Stop;
+	}
+	return Plugin_Continue;
+}

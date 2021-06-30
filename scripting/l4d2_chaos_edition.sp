@@ -2,7 +2,6 @@
 #include <sdktools>
 #include <left4dhooks>
 #include <clientprefs>
-#include <datapack>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -40,21 +39,19 @@ public void OnPluginStart()
 	HookEvent("boomer_exploded", Event_BoomerExploded, EventHookMode_Pre);
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("bot_player_replace", Event_BotPlayerReplace);
-	//HookEvent("tank_spawn", Event_TankSpawn);
+	HookEvent("jockey_ride", Event_JockeyRide);
 }
 public void OnPluginEnd()
 {
 	for(int client = 1; client <= MaxClients; ++client)
 	{
-		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && IsPlayerAlive(client) && g_GnomePickUpCookie != null)
+		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && IsPlayerAlive(client) && g_GnomePickUpCookie != INVALID_HANDLE)
 		{
 			SetClientCookie(client, g_GnomePickUpCookie, "");
 			SetClientCookie(client, g_CursedCookie, "");
 		}
 	}
 }
-
-
 
 public void OnMapStart()
 {
@@ -68,16 +65,18 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/yeet.mp3");
 	PrecacheSound("kingo_chaos_edition/crit_grenade_launcher.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
+	PrecacheSound("music/gallery_music.mp3");
 	
 	char wak47[32] = "weapon_rifle_ak47";
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
 	g_GnomePickUpCookie = RegClientCookie("gnome Cookie", "keeps track if player picked up the gnome before", CookieAccess_Private);
+	g_CursedCookie = RegClientCookie("curse cookie", "if set players movement keys are inverted", CookieAccess_Private);
 	for (int client = 1; client <= MaxClients; ++client)
 	{
 		SetClientCookie(client, g_GnomePickUpCookie, "");
-		SetClientCookie(client, g_GnomePickUpCookie, "");
+		SetClientCookie(client, g_CursedCookie, "");
 	}
 	
 	
