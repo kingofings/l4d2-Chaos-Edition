@@ -1,7 +1,5 @@
 ### SourcePawn ###
 # SourcePawn
-*.dll # extensions
-*.so # extensions
-*.smx # plugins
-*.inc # includes
-*.exe # compiler
+scripting/*.smx # plugins
+scripting/include/*.inc # includes
+scripting/*.exe # compiler
