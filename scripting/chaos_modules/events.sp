@@ -231,12 +231,10 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 		tank[3] = L4D2_SpawnTank(location, NULL_VECTOR);
 		PrintHintText(client, "You rolled: Jumpscare!");
 		PrintToChat(client, "You rolled: Jumpscare!");
-		DataPack jumpscare;
-		CreateDataTimer(1.0, Timer_KillJumpscare, jumpscare);
-		jumpscare.WriteCell(tank[0]);
-		jumpscare.WriteCell(tank[1]);
-		jumpscare.WriteCell(tank[2]);
-		jumpscare.WriteCell(tank[3]);
+		SetEntProp(tank[0], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[1], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[2], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[3], Prop_Send, "m_iHealth", 1);
 	}
 	else if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGSDoor == 1 && sDoor)
 	{
@@ -249,12 +247,10 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 		tank[3] = L4D2_SpawnTank(location, NULL_VECTOR);
 		PrintHintText(client, "You rolled: Jumpscare!");
 		PrintToChat(client, "You rolled: Jumpscare!");
-		DataPack jumpscare;
-		CreateDataTimer(1.0, Timer_KillJumpscare, jumpscare);
-		jumpscare.WriteCell(tank[0]);
-		jumpscare.WriteCell(tank[1]);
-		jumpscare.WriteCell(tank[2]);
-		jumpscare.WriteCell(tank[3]);
+		SetEntProp(tank[0], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[1], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[2], Prop_Send, "m_iHealth", 1);
+		SetEntProp(tank[3], Prop_Send, "m_iHealth", 1);
 	}
 }
 

@@ -67,20 +67,6 @@ public Action PlayPillLaugh(Handle LTimer, DataPack pack)
 	EmitSoundToAll("player/survivor/voice/manager/taunt07.wav", client);
 }
 
-public Action Timer_KillJumpscare(Handle Khandle, DataPack jumpscare)
-{
-	int tank[4];
-	jumpscare.Reset();
-	tank[0] = jumpscare.ReadCell();
-	tank[1] = jumpscare.ReadCell();
-	tank[2] = jumpscare.ReadCell();
-	tank[3] = jumpscare.ReadCell();
-	ServerCommand("sm_slay \"#%N\"", tank[0]);
-	ServerCommand("sm_slay \"#%N\"", tank[1]);
-	ServerCommand("sm_slay \"#%N\"", tank[2]);
-	ServerCommand("sm_slay \"#%N\"", tank[3]);
-}
-
 public Action SetAWP(Handle SAWPTimer)
 {
 	char awp[32] = "weapon_sniper_awp";
