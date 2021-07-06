@@ -156,12 +156,13 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		{
 			
 			int activeWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
-			char SactiveWeapon[64];
-			IntToString(activeWeapon, SactiveWeapon, sizeof(SactiveWeapon));
+			int timerArray[2];
+			timerArray[0] = client;
+			timerArray[1] = activeWeapon;
 			DataPack gnomeStar;
 			CreateDataTimer(0.1, Timer_GnomeStarman, gnomeStar, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-			gnomeStar.WriteCell(client);
-			gnomeStar.WriteString(SactiveWeapon);
+			gnomeStar.WriteCell(timerArray[0]);
+			gnomeStar.WriteCell(timerArray[1]);
 			PrintHintText(client, "You rolled: STARMAN INVINCIBLE UNTIL GNOME IS DROPPED DON'T GET PINNED!!!");
 			PrintToChat(client, "You rolled: STARMAN INVINCIBLE UNTIL GNOME IS DROPPED DON'T GET PINNED!!!");
 			H_StarManReapply = CreateTimer(12.4, Timer_StarmanReapply, gnomeStar, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);

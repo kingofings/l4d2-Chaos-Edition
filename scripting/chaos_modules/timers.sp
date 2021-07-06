@@ -96,10 +96,12 @@ public Action ResetAKJam(Handle AKTimer)
 public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
-	int client = gnomeStar.ReadCell();
-	char SactiveWeapon[64];
-	gnomeStar.ReadString(SactiveWeapon, sizeof(SactiveWeapon));
-	int activeWeapon = StringToInt(SactiveWeapon);
+	int timerArray[2];
+	timerArray[0] = gnomeStar.ReadCell();
+	timerArray[1] = gnomeStar.ReadCell();
+	int client = timerArray[0];
+	int activeWeapon = timerArray[1];
+	
 	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && activeWeapon == currentActiveWeapon)
 	{
@@ -113,10 +115,11 @@ public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
-	int client = gnomeStar.ReadCell();
-	char SactiveWeapon[64];
-	gnomeStar.ReadString(SactiveWeapon, sizeof(SactiveWeapon));
-	int activeWeapon = StringToInt(SactiveWeapon);
+	int timerArray[2];
+	timerArray[0] = gnomeStar.ReadCell();
+	timerArray[1] = gnomeStar.ReadCell();
+	int client = timerArray[0];
+	int activeWeapon = timerArray[1];
 	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
 	int RNGRed = GetRandomInt(1, 255);
 	int RNGGreen = GetRandomInt(1, 255);
