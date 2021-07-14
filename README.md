@@ -27,3 +27,4 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 # Dependencies
 
 -  Left 4 DHooks Direct https://forums.alliedmods.net/showthread.php?t=321696
+-  Godmode Deluxe https://forums.alliedmods.net/showthread.php?p=979550 (will get put directly into the plugin soon this will do for now!)
