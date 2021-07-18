@@ -353,7 +353,7 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 
 public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadcast)
 {
-	int RNG = 1; //GetRandomInt(1, 500);
+	int RNG = GetRandomInt(1, 500);
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
 	{	
