@@ -34,16 +34,17 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 {
 	pack.Reset();
 	int client = pack.ReadCell();
+	int RNGHealth = GetRandomInt(1, 50);
 	float EngineTime = pack.ReadFloat();
 	
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && GetEngineTime() < EngineTime)
+	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && GetEngineTime() < EngineTime)
 	{
-		SetEntProp(client, Prop_Send, "m_iHealth", 10000);
+		SetEntProp(client, Prop_Send, "m_iHealth", RNGHealth);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
 	}
-	else if (CheckValidClient(client) && GetClientTeam(client) == 2)
+	else if (CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		ServerCommand("sm_mortal \"#%N\"", client);
+		g_GodMode[client] = 0;
 		SetEntProp(client, Prop_Send, "m_iHealth", 50);
 		SetEntityRenderColor(client, 255, 255, 255, 255);
 		PrintHintText(client, "Metal Mario Expired!");
@@ -52,7 +53,7 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 	}
 	else
 	{
-		ServerCommand("sm_mortal \"#%N\"", client);
+		g_GodMode[client] = 0;
 		PrintHintText(client, "Metal Mario Expired!");
 		PrintToChat(client, "Metal Mario Expired!");
 		return Plugin_Stop;
@@ -124,16 +125,17 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 	int RNGRed = GetRandomInt(1, 255);
 	int RNGGreen = GetRandomInt(1, 255);
 	int RNGBlue = GetRandomInt(1, 255);
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && activeWeapon == currentActiveWeapon)
+	int RNGHealth = GetRandomInt(1, 50);
+	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && activeWeapon == currentActiveWeapon)
 	{
-		SetEntProp(client, Prop_Send, "m_iHealth", 10000);
+		SetEntProp(client, Prop_Send, "m_iHealth", RNGHealth);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
 		SetEntPropFloat(client, Prop_Send, "m_healthBufferTime", GetGameTime());
 		SetEntityRenderColor(client, RNGRed, RNGGreen, RNGBlue, 255);
 	}
-	else
+	else if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		ServerCommand("sm_mortal \"#%N\"", client);
+		g_GodMode[client] = 0;
 		PrintHintText(client, "You dropped the gnome! Invincibility expired!");
 		PrintToChat(client, "You dropped the gnome! Invincibility expired!");
 		SetEntProp(client, Prop_Send, "m_iHealth", 100);
@@ -150,19 +152,16 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 		
 		return Plugin_Stop;
 	}
-	return Plugin_Continue;
-}
-//Set gnome cookie when rescuing survivor since it gets reset on player_spawn
-public Action Timer_GnomeStarRescued(Handle RescuedGnomeStar, any clientid)
-{
-	int client = EntRefToEntIndex(clientid);
-	char cookie[8];
-	GetClientCookie(client, g_GnomePickUpCookie, cookie, sizeof(cookie));
-	if(!StrEqual(cookie, "gnome", false))
+	else
 	{
-		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
-		PrintToServer("Set %N gnome cookie back to gnome", client);
+		if(H_StarManReapply != INVALID_HANDLE)
+		{
+			KillTimer(H_StarManReapply);
+			H_StarManReapply = INVALID_HANDLE;
+		}
+		return Plugin_Stop;
 	}
+	return Plugin_Continue;
 }
 
 public Action Timer_ResetCrit(Handle HResetCrit)
@@ -173,7 +172,7 @@ public Action Timer_ResetCrit(Handle HResetCrit)
 public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
 {
 	int client = EntRefToEntIndex(clientid);
-	SetClientCookie(client, g_CursedCookie, "");
+	g_Cursed[client] = 0;
 }
 
 //Carnival Ride
@@ -207,4 +206,13 @@ public Action Timer_ResetCarnivalRide(Handle HRestoreJResist, DataPack carnivalR
 		return Plugin_Stop;
 	}
 	return Plugin_Continue;
+}
+
+public Action Timer_ResetNoFall(Handle NFReset, any clientid)
+{
+	int client = EntRefToEntIndex(clientid);
+	if(g_NoFall[client] == 1)
+	{
+		g_NoFall[client] = 0;
+	}
 }

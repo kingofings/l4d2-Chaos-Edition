@@ -4,20 +4,15 @@ public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadc
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
-	PrintToServer("Round Start fired!");
-	ServerCommand("sm_mortal @all");
 	for(int client = 1; client <= MaxClients; ++client)
 	{
-		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && g_GnomePickUpCookie != INVALID_HANDLE)
-		{
-			SetClientCookie(client, g_GnomePickUpCookie, "");
-		}
-		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && g_CursedCookie != INVALID_HANDLE)
-		{
-			SetClientCookie(client, g_CursedCookie, "");
-		}
+		g_GnomePickedUp[client] = 0;
+		g_Cursed[client] = 0;
+		g_NoFall[client] = 0;
+		g_GodMode[client] = 0;
 		
-	}	
+	}
+	PrintToServer("[CHAOS] Reset Global Variables of all Players");	
 }
 
 public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcast)
@@ -27,7 +22,14 @@ public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcas
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
-	ServerCommand("sm_mortal @all");
+	for(int client = 1; client <= MaxClients; ++client)
+	{
+		g_GnomePickedUp[client] = 0;
+		g_Cursed[client] = 0;
+		g_NoFall[client] = 0;
+		g_GodMode[client] = 0;
+	}
+	PrintToServer("[CHAOS] Reset Global Variables of all Players");
 }
 
 public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadcast)
@@ -35,8 +37,9 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 	int userid = event.GetInt("subject");
 	int client = GetClientOfUserId(userid);
 	int RNGRoll = GetRandomInt(1, 10);
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1)
+	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && RNGRoll == 1)
 	{
+		g_GodMode[client] = 1;
 		float EngineTime = GetEngineTime() + 10.0;
 		DataPack pack;
 		CreateDataTimer(0.1, Timer_MetalMario, pack, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
@@ -49,7 +52,6 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 		EmitSoundToAll("kingo_chaos_edition/metal_mario.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
 		EmitSoundToAll("kingo_chaos_edition/metal_mario.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
 		EmitSoundToAll("kingo_chaos_edition/metal_mario.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
-		ServerCommand("sm_god \"#%N\"", client);
 	}
 	if(RNGRoll == 2 && CheckValidClient(client) && GetClientTeam(client) == 2)
 	{
@@ -129,8 +131,6 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	char item[16];
-	char cookie[8];
-	GetClientCookie(client, g_GnomePickUpCookie, cookie, sizeof(cookie));
 	event.GetString("item", item, sizeof(item));
 	int RNG = GetRandomInt(1, 4);
 	if(StrEqual(item, "pain_pills") && CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
@@ -146,15 +146,15 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		CreateDataTimer(0.4, PlayPillLaugh, pack);
 		pack.WriteCell(client);
 	}
-	if(StrEqual(item, "gnome", false) && CheckValidClient(client) && GetClientTeam(client) == 2 && !StrEqual(cookie, "gnome", false))
+	if(StrEqual(item, "gnome", false) && CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && g_GnomePickedUp[client] == 0)
 	{
-		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
-		PrintToServer("Client %N picked up the gnome for the first time", client);
-		int RNGGnome = GetRandomInt(1, 25);
+		g_GnomePickedUp[client] = 1;
+		PrintToServer("[CHAOS] Client %N picked up the gnome for the first time", client);
+		int RNGGnome = 1; //GetRandomInt(1, 25);
 		
 		if(RNGGnome == 1)
 		{
-			
+			g_GodMode[client] = 1;
 			int activeWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
 			int timerArray[2];
 			timerArray[0] = client;
@@ -169,7 +169,6 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
 			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
 			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
-			ServerCommand("sm_god \"#%N\"", client);
 			for (int i = 1; i <= MaxClients; ++i)
 			{
 				if(i != client && i >= 1 && i <= MaxClients && IsClientInGame(i) && GetClientTeam(i) == 2)
@@ -185,17 +184,11 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 			}
 		}
 	}
-	else if(StrEqual(item, "gnome", false) && CheckValidClient(client) && GetClientTeam(client) == 2 && StrEqual(cookie, "gnome", false))
-	{
-		PrintToServer("Client %N already picked up the gnome before! Ignoring...", client);
-	}
 }
 
 public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	char cookie[8];
-	GetClientCookie(client, g_CursedCookie, cookie, sizeof(cookie));
 	int RNG = GetRandomInt(1, 6);
 	
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
@@ -204,9 +197,9 @@ public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBr
 		PrintHintText(client, "You rolled: Heart attack!");
 		PrintToChat(client, "You rolled: Heart attack!");
 	}
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && !StrEqual(cookie, "cursed", false) && RNG == 2)
+	if(CheckValidClient(client) && GetClientTeam(client) == 2 && g_Cursed[client] == 0 && RNG == 2)
 	{
-		SetClientCookie(client, g_CursedCookie, "cursed");
+		g_Cursed[client] = 1;
 		CreateTimer(10.0, Timer_RemoveCursed, EntIndexToEntRef(client));
 		PrintHintText(client, "You rolled: Cursed!");
 		PrintToChat(client, "You rolled: Cursed!");
@@ -360,10 +353,11 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 
 public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadcast)
 {
-	int RNG = GetRandomInt(1, 500);
+	int RNG = 1; //GetRandomInt(1, 500);
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
 	{	
+		g_NoFall[client] = 1;
 		ServerCommand("sm_slap \"#%N\" 0", client);
 		ServerCommand("sm_slap \"#%N\" 0", client);
 		ServerCommand("sm_slap \"#%N\" 0", client);
@@ -399,7 +393,6 @@ public Action Event_SurvivorRescued(Event event, const char[] sName, bool bDontB
 {
 	int victim = GetClientOfUserId(event.GetInt("victim"));
 	int RNG = GetRandomInt(1, 5);
-	CreateTimer(0.1, Timer_GnomeStarRescued, EntIndexToEntRef(victim));
 	if(RNG == 1)
 	{
 		float location[3];
@@ -437,7 +430,7 @@ public Action Event_BoomerExploded(Event event, const char[] sName, bool bDontBr
 public Action Event_PlayerSpawn(Event event, const char[] sName, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	SetClientCookie(client, g_GnomePickUpCookie, "");
+	g_GnomePickedUp[client] = 0;
 }
 /*
 public Action Event_TankSpawn(Event event, const char[] Name, bool bDontBroadcast)
@@ -449,11 +442,9 @@ public Action Event_TankSpawn(Event event, const char[] Name, bool bDontBroadcas
 public Action Event_BotPlayerReplace(Event event, const char[] Name, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("player"));
-	char cookie[8];
-	GetClientCookie(client, g_GnomePickUpCookie, cookie, sizeof(cookie));
-	if(!StrEqual(cookie, "gnome", false))
+	if(g_GnomePickedUp[client] != 1)
 	{
-		SetClientCookie(client, g_GnomePickUpCookie, "gnome");
+		g_GnomePickedUp[client] = 1;
 		PrintToServer("Set %N gnome cookie back to gnome", client);
 	}
 }
@@ -479,4 +470,10 @@ public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadca
 		EmitSoundToAll("music/gallery_music.mp3", attacker, 101, SNDLEVEL_GUNFIRE, _, 1.0);
 		EmitSoundToAll("music/gallery_music.mp3", attacker, 102, SNDLEVEL_GUNFIRE, _, 1.0);
 	}
+}
+//Reset Fall damage immunity after player got yeeted
+public Action Event_PlayerFallDamage(Event event, const char[] Name, bool bDontBroadcast)
+{
+	int client = GetClientOfUserId(event.GetInt("userid"));
+	CreateTimer(0.1, Timer_ResetNoFall, EntIndexToEntRef(client));
 }

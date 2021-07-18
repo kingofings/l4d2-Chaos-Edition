@@ -1,10 +1,15 @@
-Handle g_GnomePickUpCookie = INVALID_HANDLE;
 Handle H_StarManReapply = INVALID_HANDLE;
-Handle g_CursedCookie = INVALID_HANDLE;
+
 ConVar c_GrenadeLauncherDMG;
 ConVar c_JockeyControlMax;
 ConVar c_JockeyControlMin;
 ConVar c_JockeyControlVar;
+
+int g_GnomePickedUp[MAXPLAYERS + 1] = 0;
+int g_Cursed[MAXPLAYERS + 1] = 0;
+int g_NoFall[MAXPLAYERS + 1] = 0;
+int g_GodMode[MAXPLAYERS + 1] = 0;
+
 float g_JockeyControlMaxOld;
 float g_JockeyControlMinOld;
 float g_JockeyControlVarOld;
@@ -18,6 +23,8 @@ float g_JockeyControlVarOld;
 #define ZC_CHARGER 6
 #define ZC_WITCH 7
 #define ZC_TANK 8
+#define TEAM_SURVIVOR 2
+#define TEAM_INFECTED 3
 
 void CreateConVars()
 {
@@ -26,8 +33,6 @@ void CreateConVars()
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");
 	c_JockeyControlMin = FindConVar("z_jockey_control_min");
 	c_JockeyControlVar = FindConVar("z_jockey_control_variance");
-	g_GnomePickUpCookie = RegClientCookie("gnome Cookie", "keeps track if player picked up the gnome before", CookieAccess_Private);
-	g_CursedCookie = RegClientCookie("curse cookie", "if set players movement keys are inverted", CookieAccess_Private);
 }
 void SetCritGrenade(int damage)
 {

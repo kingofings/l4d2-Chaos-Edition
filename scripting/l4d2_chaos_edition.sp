@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
+#include <sdkhooks>
 #include <left4dhooks>
-#include <clientprefs>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -10,6 +10,7 @@
 #include <chaos_modules/events.sp>
 #include <chaos_modules/timers.sp>
 #include <chaos_modules/commands.sp>
+#include <chaos_modules/sdkhooks.sp>
 
 
 
@@ -40,16 +41,14 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("bot_player_replace", Event_BotPlayerReplace);
 	HookEvent("jockey_ride", Event_JockeyRide);
-}
-public void OnPluginEnd()
-{
-	for(int client = 1; client <= MaxClients; ++client)
+	HookEvent("player_falldamage", Event_PlayerFallDamage);
+	for (int i = 1; i <= MaxClients; ++i)
 	{
-		if(client >= 1 && client <= MaxClients && IsClientInGame(client) && IsPlayerAlive(client) && g_GnomePickUpCookie != INVALID_HANDLE)
+		if(IsClientInGame(i))
 		{
-			SetClientCookie(client, g_GnomePickUpCookie, "");
-			SetClientCookie(client, g_CursedCookie, "");
+			SDKHook(i, SDKHook_OnTakeDamage, OnTakeDamage);
 		}
+		
 	}
 }
 
@@ -71,37 +70,21 @@ public void OnMapStart()
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
-	g_GnomePickUpCookie = RegClientCookie("gnome Cookie", "keeps track if player picked up the gnome before", CookieAccess_Private);
-	g_CursedCookie = RegClientCookie("curse cookie", "if set players movement keys are inverted", CookieAccess_Private);
-	for (int client = 1; client <= MaxClients; ++client)
-	{
-		SetClientCookie(client, g_GnomePickUpCookie, "");
-		SetClientCookie(client, g_CursedCookie, "");
-	}
-	
-	
 }
 public void OnMapEnd()
 {
-	if(g_GnomePickUpCookie != INVALID_HANDLE)
-	{
-		CloseHandle(g_GnomePickUpCookie);
-		g_GnomePickUpCookie = INVALID_HANDLE;
-	}
 	if(H_StarManReapply != INVALID_HANDLE)
 	{
 		CloseHandle(H_StarManReapply);
 		H_StarManReapply = INVALID_HANDLE;
 	}
-	if(g_CursedCookie != INVALID_HANDLE)
-	{
-		CloseHandle(g_CursedCookie);
-		g_CursedCookie = INVALID_HANDLE;
-	}
 }
 
-public void OnClientConnected(int client)
+public void OnClientPutInServer(int client)
 {
-	SetClientCookie(client, g_GnomePickUpCookie, "");
-	SetClientCookie(client, g_CursedCookie, "");
+	g_GnomePickedUp[client] = 0;
+	g_Cursed[client] = 0;
+	g_NoFall[client] = 0;
+	g_GodMode[client] = 0;
+	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }

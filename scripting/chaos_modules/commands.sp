@@ -1,8 +1,6 @@
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon) 
 {
-	char cookie[8];
-	GetClientCookie(client, g_CursedCookie, cookie, sizeof(cookie));
-	if(StrEqual(cookie, "cursed", false))
+	if(g_Cursed[client] == 1)
 	{
 		velocity[0] = -velocity[0];
 		if(buttons & IN_FORWARD) 
@@ -17,7 +15,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		}
 	}
 		
-	if(StrEqual(cookie, "cursed", false))
+	if(g_Cursed[client] == 1)
 	{
 		velocity[1] = -velocity[1];
 		if(buttons & IN_MOVELEFT) 
