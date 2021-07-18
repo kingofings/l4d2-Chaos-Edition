@@ -150,7 +150,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 	{
 		g_GnomePickedUp[client] = 1;
 		PrintToServer("[CHAOS] Client %N picked up the gnome for the first time", client);
-		int RNGGnome = 1; //GetRandomInt(1, 25);
+		int RNGGnome = GetRandomInt(1, 25);
 		
 		if(RNGGnome == 1)
 		{
