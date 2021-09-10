@@ -163,11 +163,6 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 	}
 	return Plugin_Continue;
 }
-
-public Action Timer_ResetCrit(Handle HResetCrit)
-{
-	UnSetCritGrenade(400);
-}
 //Cursed
 public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
 {

@@ -2,6 +2,7 @@
 #include <sdktools>
 #include <sdkhooks>
 #include <left4dhooks>
+#include <dhooks>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -11,6 +12,7 @@
 #include <chaos_modules/timers.sp>
 #include <chaos_modules/commands.sp>
 #include <chaos_modules/sdkhooks.sp>
+#include <chaos_modules/dhooks.sp>
 
 
 
@@ -48,8 +50,23 @@ public void OnPluginStart()
 		{
 			SDKHook(i, SDKHook_OnTakeDamage, OnTakeDamage);
 		}
-		
 	}
+	
+	Handle hGameConf = new GameData("l4d2.chaos");
+	if(!hGameConf)
+		SetFailState("Could not find chaos gamedata!");
+		
+	Handle dtGrenadeProjExplode = DHookCreateFromConf(hGameConf, "CGrenadeLauncher_Projectile::ExplodeTouch()");
+	if(!dtGrenadeProjExplode)
+		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::ExplodeTouch()");
+	DHookEnableDetour(dtGrenadeProjExplode, true, OnGrenadeLauncherProjExplodePost);
+	
+	Handle dtGrenadeProjSpawned = DHookCreateFromConf(hGameConf, "CGrenadeLauncher_Projectile::Spawn()");
+	if(!dtGrenadeProjSpawned)
+		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::Spawn()");	
+	DHookEnableDetour(dtGrenadeProjSpawned, false, OnGrenadeLauncherProjSpawnPre);
+	
+	delete hGameConf;
 }
 
 public void OnMapStart()
@@ -67,9 +84,11 @@ public void OnMapStart()
 	PrecacheSound("music/gallery_music.mp3");
 	
 	char wak47[32] = "weapon_rifle_ak47";
-	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
+	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.13);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
+	
+	g_randomCritActive = false;
 }
 public void OnMapEnd()
 {

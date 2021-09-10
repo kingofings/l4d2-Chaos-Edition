@@ -12,6 +12,7 @@ public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadc
 		g_GodMode[client] = 0;
 		
 	}
+	g_randomCritActive = false;
 	PrintToServer("[CHAOS] Reset Global Variables of all Players");	
 }
 
@@ -29,6 +30,7 @@ public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcas
 		g_NoFall[client] = 0;
 		g_GodMode[client] = 0;
 	}
+	g_randomCritActive = false;
 	PrintToServer("[CHAOS] Reset Global Variables of all Players");
 }
 
@@ -254,7 +256,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	char weapon[32];
 	int RNG = GetRandomInt(1, 500);
 	int RNGAWP = GetRandomInt(1, 50);
-	int RNGCrit = GetRandomInt(1, 50);
+	//int RNGCrit = GetRandomInt(1, 50);
 	event.GetString("weapon", weapon, sizeof(weapon));
 	//ak jam
 	if(StrEqual(weapon, "rifle_ak47") && RNG == 1 && CheckValidClient(client))
@@ -320,16 +322,6 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 			RemovePlayerItem(client, slot);
 			AcceptEntityInput(slot, "Kill");
 		}
-	}
-	if(StrEqual(weapon, "grenade_launcher") && CheckValidClient(client) && RNGCrit == 1)
-	{
-		PrintHintText(client, "You rolled: Random Crit!");
-		PrintToChat(client, "You rolled: Random Crit!");
-		SetCritGrenade(1200);
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
-		CreateTimer(3.9, Timer_ResetCrit);
 	}
 }
 

@@ -10,9 +10,13 @@ int g_Cursed[MAXPLAYERS + 1] = 0;
 int g_NoFall[MAXPLAYERS + 1] = 0;
 int g_GodMode[MAXPLAYERS + 1] = 0;
 
+int g_oldGrenadeLauncherDamage;
+
 float g_JockeyControlMaxOld;
 float g_JockeyControlMinOld;
 float g_JockeyControlVarOld;
+
+bool g_randomCritActive = false;
 
 #define PLUGIN_VERSION "1.0"
 #define ZC_SMOKER 1
@@ -34,13 +38,14 @@ void CreateConVars()
 	c_JockeyControlMin = FindConVar("z_jockey_control_min");
 	c_JockeyControlVar = FindConVar("z_jockey_control_variance");
 }
-void SetCritGrenade(int damage)
+void SetCritGrenade(int multiplier)
 {
-	c_GrenadeLauncherDMG.IntValue = damage;
+	g_oldGrenadeLauncherDamage = c_GrenadeLauncherDMG.IntValue;
+	c_GrenadeLauncherDMG.IntValue *= multiplier;
 }
-void UnSetCritGrenade(int damage)
+void UnSetCritGrenade()
 {
-	c_GrenadeLauncherDMG.IntValue = damage;
+	c_GrenadeLauncherDMG.IntValue = g_oldGrenadeLauncherDamage;
 }
 void L4D2_SetJockeyControlMax(float amount)
 {
