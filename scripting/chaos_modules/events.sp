@@ -45,7 +45,7 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 		float EngineTime = GetEngineTime() + 10.0;
 		DataPack pack;
 		CreateDataTimer(0.1, Timer_MetalMario, pack, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
-		pack.WriteCell(client);
+		pack.WriteCell(GetClientSerial(client));
 		pack.WriteFloat(EngineTime);
 		SetEntityRenderColor(client, 0, 0, 0, 255);
 		PrintHintText(client, "You rolled: Metal Mario!");
@@ -60,7 +60,7 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 		float EngineTime = GetEngineTime() + 3.45;
 		DataPack health_roulette;
 		CreateDataTimer(0.1, Timer_HealthRoulette, health_roulette, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-		health_roulette.WriteCell(client);
+		health_roulette.WriteCell(GetClientSerial(client));
 		health_roulette.WriteFloat(EngineTime);
 		PrintHintText(client, "You rolled: Health roulette!");
 		PrintToChat(client, "You rolled: Health roulette");
@@ -77,28 +77,35 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	int victim = GetClientOfUserId(event.GetInt("subject"));
 	int incapCount = GetEntProp(victim, Prop_Send, "m_currentReviveCount");
-	int RNGRoll = GetRandomInt(1, 5);
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1 && victim >= 1 && victim <= MaxClients && IsClientInGame(victim) && IsPlayerAlive(victim) && GetClientTeam(victim) == 2)
+	int RNGRoll = 1; // GetRandomInt(1, 5);
+	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1 && CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 	{
 		SetEntProp(client, Prop_Send, "m_isIncapacitated", 1);
-		SetEntProp(victim, Prop_Send, "m_isIncapacitated", 0);
-		SetEntProp(victim, Prop_Send, "m_iHealth", 1);
-		SetEntPropFloat(victim, Prop_Send, "m_healthBuffer", 29.0);
-		SetEntProp(victim, Prop_Send, "m_currentReviveCount", incapCount + 1);
+		Event eventincap = CreateEvent("player_incapacitated");
+		if(eventincap)
+		{
+			eventincap.SetInt("userid", GetClientUserId(client));
+			eventincap.SetInt("attacker", GetClientUserId(victim));
+			for (int i = 1; i <= MaxClients; ++i)
+			{
+				if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
+					eventincap.FireToClient(i);
+			}
+			delete eventincap;
+		}
+		
+		SDKCall(g_sdkcallOnRevive, victim);
 		PrintHintText(client, "You rolled: Eye for an Eye!");
 		PrintToChat(client,"You rolled: Eye for an Eye!"); //incase another message blocks the hint message
 		PrintHintText(victim, "%N rolled Eye for an Eye! RISE!", client);
 		PrintToChat(victim, "%N rolled Eye for an Eye! RISE!", client);
+		
 		if(incapCount == 1)
 		{
-			SetEntProp(victim , Prop_Send, "m_isGoingToDie", 1); //Vocalization of survivor voice responses
-			SetEntProp(victim, Prop_Send, "m_bIsOnThirdStrike", 1); //Visual B&W effect for client
 			for (int i = 1; i <= MaxClients; ++i)
 			{
 				if(i >= 1 && i <= MaxClients && IsClientInGame(i) && GetClientTeam(i) == 2 && !IsFakeClient(i)) //Only send hintbox to Survivors (and not bots) and not infected!!!
-				{
 					PrintHintText(i, "%N is Black and White!", victim);
-				}
 			}
 		}
 	}
@@ -116,7 +123,6 @@ public Action Event_WitchKilled(Event event, const char[] sName, bool bDontBroad
 			float location[3];
 			GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
 			L4D2_SpawnTank(location, NULL_VECTOR);
-			PrintHintText(client, "You rolled: Witch revenge!");
 			PrintToChat(client, "You rolled: Witch revenge!");
 			for (int i = 1; i <= MaxClients; ++i)
 			{
@@ -145,8 +151,8 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		PrintHintText(client, "You rolled: Pills here!");
 		PrintToChat(client, "You rolled: Pills here!");
 		DataPack pack;
-		CreateDataTimer(0.4, PlayPillLaugh, pack);
-		pack.WriteCell(client);
+		CreateDataTimer(0.4, PlayPillLaugh, pack, TIMER_FLAG_NO_MAPCHANGE);
+		pack.WriteCell(GetClientSerial(client));
 	}
 	if(StrEqual(item, "gnome", false) && CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && g_GnomePickedUp[client] == 0)
 	{
@@ -159,8 +165,8 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 			g_GodMode[client] = 1;
 			int activeWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
 			int timerArray[2];
-			timerArray[0] = client;
-			timerArray[1] = activeWeapon;
+			timerArray[0] = GetClientSerial(client);
+			timerArray[1] = EntIndexToEntRef(activeWeapon);
 			DataPack gnomeStar;
 			CreateDataTimer(0.1, Timer_GnomeStarman, gnomeStar, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 			gnomeStar.WriteCell(timerArray[0]);
@@ -202,7 +208,7 @@ public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBr
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && g_Cursed[client] == 0 && RNG == 2)
 	{
 		g_Cursed[client] = 1;
-		CreateTimer(10.0, Timer_RemoveCursed, EntIndexToEntRef(client));
+		CreateTimer(10.0, Timer_RemoveCursed, EntIndexToEntRef(client), TIMER_FLAG_NO_MAPCHANGE);
 		PrintHintText(client, "You rolled: Cursed!");
 		PrintToChat(client, "You rolled: Cursed!");
 	}
@@ -263,7 +269,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	{
 		char ak47[32] = "weapon_rifle_ak47";
 		L4D2_SetFloatWeaponAttribute(ak47, L4D2FWA_CycleTime, 20.0);
-		CreateTimer(20.0, ResetAKJam);
+		CreateTimer(20.0, ResetAKJam, _, TIMER_FLAG_NO_MAPCHANGE);
 		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
@@ -275,7 +281,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	}
 	if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && RNGAWP == 1 && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) != 10000)
 	{
-		CreateTimer(0.1, SetAWP);
+		CreateTimer(0.1, SetAWP, _, TIMER_FLAG_NO_MAPCHANGE);
 		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
@@ -287,7 +293,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	}
 	if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) == 10000)
 	{
-		CreateTimer(0.1, ResetAWP);
+		CreateTimer(0.1, ResetAWP, _, TIMER_FLAG_NO_MAPCHANGE);
 		for (int i = 1; i <= MaxClients; ++i)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
@@ -330,9 +336,9 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 	int userid = event.GetInt("userid");
 	int client = GetClientOfUserId(userid);
 	int RNG = GetRandomInt(1, 100);
-	if(client >= 1 && client <= MaxClients && IsClientInGame(client) && GetClientTeam(client) == 2 && RNG == 1)
+	if(client >= 1 && client <= MaxClients && IsClientInGame(client) && GetClientTeam(client) == TEAM_SURVIVOR && RNG == 1)
 	{
-		SetEntProp(client, Prop_Send, "m_isIncapacitated", 0);
+		SDKCall(g_sdkcallOnRevive, client);
 		SetEntProp(client, Prop_Send, "m_iHealth", 100);
 		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
 		SetEntProp(client, Prop_Send, "m_isGoingToDie", 0);
@@ -454,7 +460,7 @@ public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadca
 		L4D2_SetJockeyControlVar(0.0);
 		DataPack carnivalRide;
 		CreateDataTimer(0.0 , Timer_ResetCarnivalRide, carnivalRide, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);	
-		carnivalRide.WriteCell(attacker);
+		carnivalRide.WriteCell(GetClientSerial(attacker));
 		carnivalRide.WriteFloat(EngineTime);
 		PrintHintTextToAll("Infected rolled: No Jockey Resistance for 20 seconds!");
 		PrintToChatAll("Infected rolled: No Jockey Resistance for 20 seconds!");
@@ -467,5 +473,5 @@ public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadca
 public Action Event_PlayerFallDamage(Event event, const char[] Name, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	CreateTimer(0.1, Timer_ResetNoFall, EntIndexToEntRef(client));
+	CreateTimer(0.1, Timer_ResetNoFall, EntIndexToEntRef(client), TIMER_FLAG_NO_MAPCHANGE);
 }

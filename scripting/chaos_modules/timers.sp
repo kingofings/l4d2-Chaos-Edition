@@ -1,7 +1,7 @@
 public Action Timer_HealthRoulette(Handle HRTimer, DataPack health_roulette)
 {
 	health_roulette.Reset();
-	int client = health_roulette.ReadCell();
+	int client = GetClientFromSerial(health_roulette.ReadCell());
 	float EngineTime = health_roulette.ReadFloat();
 	if(CheckValidClient(client) && GetEngineTime() >= EngineTime && GetClientTeam(client) == 2)
 	{
@@ -33,7 +33,7 @@ public Action Timer_HealthRoulette(Handle HRTimer, DataPack health_roulette)
 public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 {
 	pack.Reset();
-	int client = pack.ReadCell();
+	int client = GetClientFromSerial(pack.ReadCell());
 	int RNGHealth = GetRandomInt(1, 50);
 	float EngineTime = pack.ReadFloat();
 	
@@ -64,7 +64,7 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 public Action PlayPillLaugh(Handle LTimer, DataPack pack)
 {
 	pack.Reset();
-	int client = pack.ReadCell();
+	int client = GetClientFromSerial(pack.ReadCell());
 	EmitSoundToAll("player/survivor/voice/manager/taunt07.wav", client);
 }
 
@@ -98,8 +98,8 @@ public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
 	int timerArray[2];
-	timerArray[0] = gnomeStar.ReadCell();
-	timerArray[1] = gnomeStar.ReadCell();
+	timerArray[0] = GetClientFromSerial(gnomeStar.ReadCell());
+	timerArray[1] = EntRefToEntIndex(gnomeStar.ReadCell());
 	int client = timerArray[0];
 	int activeWeapon = timerArray[1];
 	
@@ -117,8 +117,8 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
 	int timerArray[2];
-	timerArray[0] = gnomeStar.ReadCell();
-	timerArray[1] = gnomeStar.ReadCell();
+	timerArray[0] = GetClientFromSerial(gnomeStar.ReadCell());
+	timerArray[1] = EntRefToEntIndex(gnomeStar.ReadCell());
 	int client = timerArray[0];
 	int activeWeapon = timerArray[1];
 	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
@@ -174,7 +174,7 @@ public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
 public Action Timer_ResetCarnivalRide(Handle HRestoreJResist, DataPack carnivalRide)
 {
 	carnivalRide.Reset();
-	int attacker = carnivalRide.ReadCell();
+	int attacker = GetClientFromSerial(carnivalRide.ReadCell());
 	float EngineTime = carnivalRide.ReadFloat();
 	if(!CheckValidClient(attacker))
 	{

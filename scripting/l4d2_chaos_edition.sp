@@ -66,6 +66,12 @@ public void OnPluginStart()
 		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::Spawn()");	
 	DHookEnableDetour(dtGrenadeProjSpawned, false, OnGrenadeLauncherProjSpawnPre);
 	
+	StartPrepSDKCall(SDKCall_Player);
+	PrepSDKCall_SetFromConf(hGameConf, SDKConf_Signature, "CTerrorPlayer::OnRevived()");
+	g_sdkcallOnRevive = EndPrepSDKCall();
+	if(!g_sdkcallOnRevive)
+		SetFailState("Failed to Prepare SDKCall %s signature broken?", "CTerrorPlayer::OnRevived()");
+	
 	delete hGameConf;
 }
 
@@ -82,7 +88,6 @@ public void OnMapStart()
 	PrecacheSound("kingo_chaos_edition/crit_grenade_launcher.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
 	PrecacheSound("music/gallery_music.mp3");
-	
 	char wak47[32] = "weapon_rifle_ak47";
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.13);
 	char awp[32] = "weapon_sniper_awp";

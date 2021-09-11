@@ -38,6 +38,11 @@
 				"library"	"server"
 				"linux"		"@_ZN27CGrenadeLauncher_Projectile5SpawnEv"
 			}
+			"CTerrorPlayer::OnRevived()"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer9OnRevivedEv"
+			}
 		}
 	}
 }
