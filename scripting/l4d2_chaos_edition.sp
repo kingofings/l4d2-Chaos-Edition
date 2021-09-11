@@ -26,6 +26,7 @@ public Plugin myinfo =
 };
 public void OnPluginStart()
 {
+	RegAdminCmd("sm_yeet", Command_Yeet, ADMFLAG_CHEATS);
 	CreateConVars();
 	HookEvent("pills_used", Event_PillsUsed);
 	HookEvent("revive_end", Event_ReviveEnd);
@@ -66,6 +67,11 @@ public void OnPluginStart()
 		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::Spawn()");	
 	DHookEnableDetour(dtGrenadeProjSpawned, false, OnGrenadeLauncherProjSpawnPre);
 	
+	Handle dtOnTankRockSpawn = DHookCreateFromConf(hGameConf, "CTankRock::Spawn()");
+	if(!dtOnTankRockSpawn)
+		SetFailState("Failed to create detour %s", "CTankRock::Spawn()");
+	DHookEnableDetour(dtOnTankRockSpawn, true, OnTankRockSpawnPost);
+	
 	StartPrepSDKCall(SDKCall_Player);
 	PrepSDKCall_SetFromConf(hGameConf, SDKConf_Signature, "CTerrorPlayer::OnRevived()");
 	g_sdkcallOnRevive = EndPrepSDKCall();
@@ -77,17 +83,33 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
+	//Precache
+	
+	//Sound Precache
+	
 	PrecacheSound("kingo_chaos_edition/metal_mario.mp3");
-	AddFileToDownloadsTable("sound/kingo_chaos_edition/metal_mario.mp3");
 	PrecacheSound("kingo_chaos_edition/health_roulette.mp3");
-	AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
 	PrecacheSound("kingo_chaos_edition/gnome_starman.mp3");
-	AddFileToDownloadsTable("sound/kingo_chaos_edition/gnome_starman.mp3");
 	PrecacheSound("kingo_chaos_edition/yeet.mp3");
-	AddFileToDownloadsTable("sound/kingo_chaos_edition/yeet.mp3");
 	PrecacheSound("kingo_chaos_edition/crit_grenade_launcher.mp3");
-	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
 	PrecacheSound("music/gallery_music.mp3");
+	PrecacheSound("kingo_chaos_edition/tank/rock_ambulance.mp3");
+	
+	//Model Precache
+	
+	PrecacheModel("models/props_vehicles/cara_69sedan.mdl", true);
+	PrecacheModel("models/props_vehicles/ambulance.mdl", true);
+	
+	//Download Table
+	
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/metal_mario.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/gnome_starman.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/yeet.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/tank/rock_ambulance.mp3");
+	
+	
 	char wak47[32] = "weapon_rifle_ak47";
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.13);
 	char awp[32] = "weapon_sniper_awp";

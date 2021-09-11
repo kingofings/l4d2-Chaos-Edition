@@ -27,3 +27,14 @@ public MRESReturn OnGrenadeLauncherProjExplodePost(int projectile, Handle hParam
 	}
 	return MRES_Ignored;
 }
+
+public MRESReturn OnTankRockSpawnPost(int rock, Handle hParams)
+{
+	if(!IsValidEntity(rock))
+		return MRES_Ignored;
+	
+	int RNG = GetRandomInt(1, 5);
+	if(RNG == 1)
+		CreateTimer(1.4, Timer_TankRockRoll, EntIndexToEntRef(rock), TIMER_FLAG_NO_MAPCHANGE);
+	return MRES_Ignored;
+}

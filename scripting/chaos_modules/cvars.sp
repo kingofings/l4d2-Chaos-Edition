@@ -2,6 +2,7 @@ Handle H_StarManReapply = INVALID_HANDLE;
 Handle g_sdkcallOnRevive;
 
 ConVar c_GrenadeLauncherDMG;
+ConVar c_GrenadeTankDMG;
 ConVar c_JockeyControlMax;
 ConVar c_JockeyControlMin;
 ConVar c_JockeyControlVar;
@@ -12,6 +13,7 @@ int g_NoFall[MAXPLAYERS + 1] = 0;
 int g_GodMode[MAXPLAYERS + 1] = 0;
 
 int g_oldGrenadeLauncherDamage;
+int g_oldTankGrenadeDamage;
 
 float g_JockeyControlMaxOld;
 float g_JockeyControlMinOld;
@@ -35,17 +37,21 @@ void CreateConVars()
 {
 	CreateConVar("sm_chaos_edition_version", PLUGIN_VERSION, "Standard plugin version ConVar. Please don't change me!", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	c_GrenadeLauncherDMG = FindConVar("grenadelauncher_damage");
+	c_GrenadeTankDMG = FindConVar("z_tank_grenade_damage");
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");
 	c_JockeyControlMin = FindConVar("z_jockey_control_min");
 	c_JockeyControlVar = FindConVar("z_jockey_control_variance");
 }
 void SetCritGrenade(int multiplier)
 {
+	g_oldTankGrenadeDamage = c_GrenadeTankDMG.IntValue;
 	g_oldGrenadeLauncherDamage = c_GrenadeLauncherDMG.IntValue;
 	c_GrenadeLauncherDMG.IntValue *= multiplier;
+	c_GrenadeTankDMG.IntValue *= multiplier;
 }
 void UnSetCritGrenade()
 {
+	c_GrenadeTankDMG.IntValue = g_oldTankGrenadeDamage;
 	c_GrenadeLauncherDMG.IntValue = g_oldGrenadeLauncherDamage;
 }
 void L4D2_SetJockeyControlMax(float amount)

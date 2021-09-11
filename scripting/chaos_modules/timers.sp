@@ -211,3 +211,29 @@ public Action Timer_ResetNoFall(Handle NFReset, any clientid)
 		g_NoFall[client] = 0;
 	}
 }
+
+public Action Timer_TankRockRoll(Handle timer, any rockid)
+{
+	int rock = EntRefToEntIndex(rockid);
+	if(!IsValidEntity(rock))
+	{
+		PrintToServer("Rock Entity is not valid!");
+		return Plugin_Stop;
+	}
+
+	int RNG = GetRandomInt(1, 2);
+	if(RNG == 1)
+	{
+		SetEntityModel(rock, "models/props_vehicles/ambulance.mdl");
+		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		return Plugin_Continue;
+	}
+	if(RNG == 2)
+	{
+		SetEntityModel(rock, "models/props_vehicles/cara_69sedan.mdl");
+		return Plugin_Continue;
+	}
+	return Plugin_Continue;
+}

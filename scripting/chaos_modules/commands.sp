@@ -30,3 +30,39 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		}
 	}
 }
+
+public Action Command_Yeet(int client, int args)
+{
+	if(args < 1)
+	{
+		float velocity[3];
+		GetEntPropVector(client, Prop_Data, "m_vecVelocity", velocity);
+		velocity[0] += float(GetRandomInt(1, 800)); /* x coord */
+		velocity[1] += float(GetRandomInt(1, 800)); /* y coord */
+		velocity[2] += float(GetRandomInt(1, 800)); /* z coord */
+		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
+		return Plugin_Handled;
+	}
+	else
+	{
+		char arg1[33];
+	
+		GetCmdArg(1, arg1, sizeof(arg1));
+		int target = FindTarget(client, arg1);
+		if(target <= COMMAND_TARGET_NONE)
+		{
+			ReplyToTargetError(client, target);
+			return Plugin_Handled;
+		}
+	
+		char name[MAX_NAME_LENGTH];
+		GetClientName(target, name, sizeof(name));
+		float velocity[3];
+		GetEntPropVector(target, Prop_Data, "m_vecVelocity", velocity);
+		velocity[0] += float(GetRandomInt(-800, 800)); /* x coord */
+		velocity[1] += float(GetRandomInt(-800, 800)); /* y coord */
+		velocity[2] += float(GetRandomInt(1, 800)); /* z coord */
+		TeleportEntity(target, NULL_VECTOR, NULL_VECTOR, velocity);
+		return Plugin_Handled;
+	}
+}

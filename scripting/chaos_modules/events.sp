@@ -351,33 +351,12 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 
 public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadcast)
 {
-	int RNG = GetRandomInt(1, 500);
+	int RNG = GetRandomInt(1, 100);
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
 	{	
 		g_NoFall[client] = 1;
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
-		ServerCommand("sm_slap \"#%N\" 0", client);
+		ServerCommand("sm_yeet \"#%N\" 0", client);
 		PrintHintText(client, "You rolled: YEET!");
 		PrintToChat(client, "You rolled: YEET!");
 		EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);

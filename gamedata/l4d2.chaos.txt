@@ -25,6 +25,13 @@
 				"return"	"void"
 				"this"		"entity"
 			}
+			"CTankRock::Spawn()"
+			{
+				"signature"	"CTankRock::Spawn()"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"entity"
+			}	
 		}
 		"Signatures"
 		{
@@ -42,6 +49,11 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer9OnRevivedEv"
+			}
+			"CTankRock::Spawn()"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CTankRock5SpawnEv"
 			}
 		}
 	}
