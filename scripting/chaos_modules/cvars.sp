@@ -1,5 +1,6 @@
 Handle H_StarManReapply = INVALID_HANDLE;
 Handle g_sdkcallOnRevive;
+Handle g_sdkcallOnIncap;
 
 ConVar c_GrenadeLauncherDMG;
 ConVar c_GrenadeTankDMG;
@@ -14,6 +15,8 @@ int g_GodMode[MAXPLAYERS + 1] = 0;
 
 int g_oldGrenadeLauncherDamage;
 int g_oldTankGrenadeDamage;
+int g_TankRockAmbulanceEntity;
+int g_TankRockCarEntity;
 
 float g_JockeyControlMaxOld;
 float g_JockeyControlMinOld;

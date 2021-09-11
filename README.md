@@ -26,8 +26,9 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Cursed, Chance to get inverted controls when using adrenaline
 - Heart Attack, Chance to get incapped when using adrenaline
 - No Jockey Resistance, Chance for a Jockey to fully remove the Survivors resistance when pouncing them.
-- Tank Cars!, Chance for tanks to throw cars.
+- Tank Cars! Chance for tanks to throw cars.
 
 # Dependencies
 
 -  Left 4 DHooks Direct https://forums.alliedmods.net/showthread.php?t=321696
+-  DHooks2 https://github.com/peace-maker/DHooks2

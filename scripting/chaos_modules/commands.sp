@@ -55,14 +55,40 @@ public Action Command_Yeet(int client, int args)
 			return Plugin_Handled;
 		}
 	
-		char name[MAX_NAME_LENGTH];
-		GetClientName(target, name, sizeof(name));
 		float velocity[3];
 		GetEntPropVector(target, Prop_Data, "m_vecVelocity", velocity);
 		velocity[0] += float(GetRandomInt(-800, 800)); /* x coord */
 		velocity[1] += float(GetRandomInt(-800, 800)); /* y coord */
 		velocity[2] += float(GetRandomInt(1, 800)); /* z coord */
 		TeleportEntity(target, NULL_VECTOR, NULL_VECTOR, velocity);
+		return Plugin_Handled;
+	}
+}
+
+public Action Command_Incap(int client, int args)
+{
+	if(args < 1)
+	{
+		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
+		int health = GetEntProp(client, Prop_Send, "m_iHealth");
+		SDKHooks_TakeDamage(client, client, client, float(health), _, _, _, _);
+		return Plugin_Handled;
+	}
+	else
+	{
+		char arg1[33];
+	
+		GetCmdArg(1, arg1, sizeof(arg1));
+		int target = FindTarget(client, arg1);
+		if(target <= COMMAND_TARGET_NONE)
+		{
+			ReplyToTargetError(client, target);
+			return Plugin_Handled;
+		}
+	
+		SetEntPropFloat(target, Prop_Send, "m_healthBuffer", 0.0);
+		int health = GetEntProp(target, Prop_Send, "m_iHealth");
+		SDKHooks_TakeDamage(target, target, target, float(health), _, _, _, _);
 		return Plugin_Handled;
 	}
 }

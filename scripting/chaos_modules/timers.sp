@@ -228,6 +228,7 @@ public Action Timer_TankRockRoll(Handle timer, any rockid)
 		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 100, SNDLEVEL_GUNFIRE, _, 1.0);
 		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 101, SNDLEVEL_GUNFIRE, _, 1.0);
 		EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		g_TankRockAmbulanceEntity = rock;
 		return Plugin_Continue;
 	}
 	if(RNG == 2)

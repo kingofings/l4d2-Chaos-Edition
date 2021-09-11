@@ -31,7 +31,21 @@
 				"callconv"	"thiscall"
 				"return"	"void"
 				"this"		"entity"
-			}	
+			}
+			"CTankRock::BounceTouch()"
+			{
+				"signature"	"CTankRock::BounceTouch()"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"entity"
+				"arguments"
+				{
+					"entity"
+					{
+						"type"	"cbaseentity"
+					}
+				}
+			}
 		}
 		"Signatures"
 		{
@@ -54,6 +68,11 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN9CTankRock5SpawnEv"
+			}
+			"CTankRock::BounceTouch()"
+			{
+				"library"	"server"
+				"linux"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
 			}
 		}
 	}

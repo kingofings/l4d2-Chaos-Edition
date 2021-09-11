@@ -80,7 +80,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 	int RNGRoll = 1; // GetRandomInt(1, 5);
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1 && CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 	{
-		SetEntProp(client, Prop_Send, "m_isIncapacitated", 1);
+		ServerCommand("sm_incap \"#%N\" 0", client);
 		Event eventincap = CreateEvent("player_incapacitated");
 		if(eventincap)
 		{
@@ -95,6 +95,18 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 		}
 		
 		SDKCall(g_sdkcallOnRevive, victim);
+		Event eventRevive = CreateEvent("revive_success");
+		if(eventRevive)
+		{
+			eventRevive.SetInt("userid", GetClientUserId(victim));
+			eventRevive.SetInt("attacker", GetClientUserId(client));
+			for (int i = 1; i <= MaxClients; ++i)
+			{
+				if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
+					eventRevive.FireToClient(i);
+			}
+			delete eventRevive;
+		}
 		PrintHintText(client, "You rolled: Eye for an Eye!");
 		PrintToChat(client,"You rolled: Eye for an Eye!"); //incase another message blocks the hint message
 		PrintHintText(victim, "%N rolled Eye for an Eye! RISE!", client);
