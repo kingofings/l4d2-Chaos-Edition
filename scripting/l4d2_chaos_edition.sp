@@ -68,10 +68,10 @@ public void OnPluginStart()
 		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::Spawn()");	
 	DHookEnableDetour(dtGrenadeProjSpawned, false, OnGrenadeLauncherProjSpawnPre);
 	
-	Handle dtOnTankRockSpawn = DHookCreateFromConf(hGameConf, "CTankRock::Spawn()");
-	if(!dtOnTankRockSpawn)
-		SetFailState("Failed to create detour %s", "CTankRock::Spawn()");
-	DHookEnableDetour(dtOnTankRockSpawn, true, OnTankRockSpawnPost);
+	Handle dtOnTankRockRelease = DHookCreateFromConf(hGameConf, "CTankRock::OnRelease()");
+	if(!dtOnTankRockRelease)
+		SetFailState("Failed to create detour %s", "CTankRock::OnRelease()");
+	DHookEnableDetour(dtOnTankRockRelease, true, OnTankRockReleasePost);
 	
 	Handle dtOnTankRockTouch = DHookCreateFromConf(hGameConf, "CTankRock::BounceTouch()");
 	if(!dtOnTankRockTouch)

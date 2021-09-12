@@ -28,52 +28,76 @@ public MRESReturn OnGrenadeLauncherProjExplodePost(int projectile, Handle hParam
 	return MRES_Ignored;
 }
 
-public MRESReturn OnTankRockSpawnPost(int rock, Handle hParams)
+public MRESReturn OnTankRockReleasePost(int rock, Handle hParams)
 {
 	if(!IsValidEntity(rock))
+	{
+		PrintToServer("[CHAOS] Released Tank rock is invalid! Not trying to roll...");
 		return MRES_Ignored;
-	
+	}
 	
 	int RNG = GetRandomInt(1, 5);
+	PrintToServer("Tank rolled a %i", RNG);
 	if(RNG == 1)
 	{
-		CreateTimer(1.4, Timer_TankRockRoll, EntIndexToEntRef(rock), TIMER_FLAG_NO_MAPCHANGE);
-		g_TankRockCarEntity = rock;
-	}
 		
+		int RNGCar = GetRandomInt(1, 2);
+		if(RNGCar == 1)
+		{
+			SetEntityModel(rock, "models/props_vehicles/ambulance.mdl");
+			EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/tank/rock_ambulance.mp3", rock, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+			g_TankRockAmbulanceEntity = rock;
+			g_TankRockCarEntity = rock;
+			PrintToServer("[CHAOS] Thrower of car rock is %N", GetEntPropEnt(g_TankRockCarEntity, Prop_Send, "m_hThrower"));
+			return MRES_Ignored;
+		}
+		if(RNGCar == 2)
+		{
+			g_TankRockCarEntity = rock;
+			SetEntityModel(rock, "models/props_vehicles/cara_69sedan.mdl");
+			return MRES_Ignored;
+		}
+	}	
 	return MRES_Ignored;
 }
 
 public MRESReturn OnTankRockTouchPost(int rock, Handle hParams)
 {
-	if(!IsValidEntity(g_TankRockCarEntity))
-		return MRES_Ignored;
-
 	if(!IsValidEntity(rock))
 	{
-		PrintToServer("Rock Touched something but Entity is invalid!");
+		PrintToServer("[CHAOS] Rock Touched something but Entity is invalid!");
+		return MRES_Ignored;
+	}
+	if(!IsValidEntity(g_TankRockCarEntity))
+	{
+		PrintToServer("[CHAOS] Rock is not a car ignoring!");
 		return MRES_Ignored;
 	}
 	if(rock == g_TankRockCarEntity)
 	{
 		int victim = DHookGetParam(hParams, 1);
-		if(CheckValidClient(victim))
+		if(CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 		{
-			int tank = GetEntPropEnt(g_TankRockCarEntity, Prop_Send, "m_hOwnerEntity");
-			SDKCall(g_sdkcallOnIncap, victim);
+			int tank = GetEntPropEnt(g_TankRockCarEntity, Prop_Send, "m_hThrower");
+			PrintToServer("[CHAOS] %N got hit by car rock! Incapping Player!", victim);
+			ServerCommand("sm_incap \"#%N\"", victim);
 			Event eventincap = CreateEvent("player_incapacitated");
-			if(eventincap && tank >= 1 && tank <= MaxClients && IsClientInGame(tank))
+			if(eventincap)
 			{
 				eventincap.SetInt("userid", GetClientUserId(victim));
-				eventincap.SetInt("attacker", GetClientUserId(tank));
+				if(tank >= 1 && tank <= MaxClients && IsClientInGame(tank))
+					eventincap.SetInt("attacker", GetClientUserId(tank));
 				for (int i = 1; i <= MaxClients; ++i)
 				{
 					if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
-					eventincap.FireToClient(i);
+						eventincap.FireToClient(i);
 				}
 				delete eventincap;
 			}
 		}
+		g_TankRockCarEntity = -1;
 	}
 	
 	if(rock == g_TankRockAmbulanceEntity)

@@ -1,6 +1,5 @@
 Handle H_StarManReapply = INVALID_HANDLE;
 Handle g_sdkcallOnRevive;
-Handle g_sdkcallOnIncap;
 
 ConVar c_GrenadeLauncherDMG;
 ConVar c_GrenadeTankDMG;

@@ -80,7 +80,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 	int RNGRoll = 1; // GetRandomInt(1, 5);
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1 && CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 	{
-		ServerCommand("sm_incap \"#%N\" 0", client);
+		ServerCommand("sm_incap \"#%N\"", client);
 		Event eventincap = CreateEvent("player_incapacitated");
 		if(eventincap)
 		{

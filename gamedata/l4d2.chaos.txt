@@ -25,12 +25,31 @@
 				"return"	"void"
 				"this"		"entity"
 			}
-			"CTankRock::Spawn()"
+			"CTankRock::OnRelease()"
 			{
-				"signature"	"CTankRock::Spawn()"
+				"signature"	"CTankRock::OnRelease()"
 				"callconv"	"thiscall"
 				"return"	"void"
 				"this"		"entity"
+				"arguments"
+				{
+					"const_vector"
+					{
+						"type"	"int"
+					}
+					"angle_vector"
+					{
+						"type"	"int"
+					}
+					"const_vector2" //???
+					{
+						"type"	"int"
+					}
+					"vector_const" //????
+					{
+						"type"	"int"
+					}
+				}
 			}
 			"CTankRock::BounceTouch()"
 			{
@@ -64,10 +83,10 @@
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer9OnRevivedEv"
 			}
-			"CTankRock::Spawn()"
+			"CTankRock::OnRelease()"
 			{
 				"library"	"server"
-				"linux"		"@_ZN9CTankRock5SpawnEv"
+				"linux"		"@_ZN9CTankRock9OnReleaseERK6VectorRK6QAngleS2_S2_"
 			}
 			"CTankRock::BounceTouch()"
 			{
