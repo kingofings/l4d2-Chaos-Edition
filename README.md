@@ -11,7 +11,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Pills Here, Chance to spawn a mob when pickup up pills
 - Health Roullete, Chance to get randomized health when using pills
 - Metal Mario, Chance to get godmode for a couple seconds when using pills
-- Jumpscare, Chance to spawn tanks in front of the client who opened a door
+- Jumpscare, Chance to spawn tanks in front of the player who opened a door
 - Karma, Chance for a boomer to explode into bilejars
 - Eye for an Eye, Chance to swap places with an incapped player if you cancel the revive
 - Miracle, Chance to immediately get revived and back to full health if you get incapped (does not work if B&W)
@@ -27,6 +27,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Heart Attack, Chance to get incapped when using adrenaline
 - No Jockey Resistance, Chance for a Jockey to fully remove the Survivors resistance when pouncing them.
 - Tank Cars! Chance for tanks to throw cars.
+- [WIP] Demolition Man! Chance to spawn additional pipebombs when using one.
 
 # Dependencies
 
