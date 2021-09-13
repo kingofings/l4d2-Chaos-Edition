@@ -78,6 +78,11 @@ public void OnPluginStart()
 		SetFailState("Failed to create detour %s", "CTankRock::BounceTouch()");
 	DHookEnableDetour(dtOnTankRockTouch, true, OnTankRockTouchPost);
 	
+	Handle dtOnPipeBombDetonate = DHookCreateFromConf(hGameConf, "CPipeBombProjectile::Detonate()");
+	if(!dtOnPipeBombDetonate)
+		SetFailState("Failed to create detour %s", "CPipeBombProjectile::Detonate()");
+	DHookEnableDetour(dtOnPipeBombDetonate, true, OnPipeBombDetonatedPost);
+	
 	//Revive SDKCall
 	StartPrepSDKCall(SDKCall_Player);
 	PrepSDKCall_SetFromConf(hGameConf, SDKConf_Signature, "CTerrorPlayer::OnRevived()");
@@ -100,11 +105,17 @@ public void OnMapStart()
 	PrecacheSound("kingo_chaos_edition/crit_grenade_launcher.mp3");
 	PrecacheSound("music/gallery_music.mp3");
 	PrecacheSound("kingo_chaos_edition/tank/rock_ambulance.mp3");
+	PrecacheSound("kingo_chaos_edition/demoman/kaboom.mp3");
 	
 	//Model Precache
 	
 	PrecacheModel("models/props_vehicles/cara_69sedan.mdl", true);
 	PrecacheModel("models/props_vehicles/ambulance.mdl", true);
+	
+	//Particles
+	
+	PrecacheParticle(PARTICLE_FUSE);
+	PrecacheParticle(PARTICLE_LIGHT);
 	
 	//Download Table
 	
@@ -114,6 +125,7 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/yeet.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/tank/rock_ambulance.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/demoman/kaboom.mp3");
 	
 	
 	char wak47[32] = "weapon_rifle_ak47";
@@ -138,5 +150,6 @@ public void OnClientPutInServer(int client)
 	g_Cursed[client] = 0;
 	g_NoFall[client] = 0;
 	g_GodMode[client] = 0;
+	g_demoManActive[client] = false;
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }

@@ -1,3 +1,12 @@
+public void OnEntityCreated(int entity, const char[] classname)
+{
+	if(IsValidEntity(entity))
+	{
+		if(StrEqual(classname, "pipe_bomb_projectile"))
+		SDKHook(entity, SDKHook_Think, OnPipeBombThink);
+	}
+}
+
 public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadcast)
 {
 	char wak47[32] = "weapon_rifle_ak47";
@@ -77,7 +86,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	int victim = GetClientOfUserId(event.GetInt("subject"));
 	int incapCount = GetEntProp(victim, Prop_Send, "m_currentReviveCount");
-	int RNGRoll = 1; // GetRandomInt(1, 5);
+	int RNGRoll = GetRandomInt(1, 5);
 	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNGRoll == 1 && CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 	{
 		ServerCommand("sm_incap \"#%N\"", client);

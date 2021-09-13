@@ -65,6 +65,13 @@
 					}
 				}
 			}
+			"CPipeBombProjectile::Detonate()"
+			{
+				"signature"	"CPipeBombProjectile::Detonate()"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"entity"
+			}
 		}
 		"Signatures"
 		{
@@ -92,6 +99,11 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN9CTankRock11BounceTouchEP11CBaseEntity"
+			}
+			"CPipeBombProjectile::Detonate()"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CPipeBombProjectile8DetonateEv"
 			}
 		}
 	}

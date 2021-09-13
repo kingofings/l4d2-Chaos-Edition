@@ -109,3 +109,17 @@ public MRESReturn OnTankRockTouchPost(int rock, Handle hParams)
 	}
 	return MRES_Ignored;
 }
+
+public MRESReturn OnPipeBombDetonatedPost(int pipebomb, Handle hParams)
+{
+	if(!IsValidEntity(pipebomb))
+		return MRES_Ignored;
+		
+	int owner = GetEntPropEnt(pipebomb, Prop_Send, "m_hOwnerEntity");
+	if(owner >= 1 && owner <= MaxClients && IsClientInGame(owner) && g_demoManActive[owner])
+	{
+		PrintToServer("[CHAOS] Set Demoman of %N to false!", owner);
+		g_demoManActive[owner] = false;
+	}
+	return MRES_Ignored;
+}

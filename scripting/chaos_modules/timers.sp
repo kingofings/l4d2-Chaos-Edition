@@ -211,3 +211,17 @@ public Action Timer_ResetNoFall(Handle NFReset, any clientid)
 		g_NoFall[client] = 0;
 	}
 }
+
+public Action Timer_DemoKaboom(Handle timer, int serial)
+{
+	int client = GetClientFromSerial(serial);
+	if(client >= 1 && client <= MaxClients && IsClientInGame(client))
+	{
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 104, SNDLEVEL_GUNFIRE, _, 1.0);
+		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 105, SNDLEVEL_GUNFIRE, _, 1.0);
+	}
+}

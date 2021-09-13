@@ -22,6 +22,7 @@ float g_JockeyControlMinOld;
 float g_JockeyControlVarOld;
 
 bool g_randomCritActive = false;
+bool g_demoManActive[MAXPLAYERS + 1] = false;
 
 #define PLUGIN_VERSION "1.0"
 #define ZC_SMOKER 1
@@ -34,6 +35,8 @@ bool g_randomCritActive = false;
 #define ZC_TANK 8
 #define TEAM_SURVIVOR 2
 #define TEAM_INFECTED 3
+#define PARTICLE_FUSE						"weapon_pipebomb_fuse"
+#define PARTICLE_LIGHT						"weapon_pipebomb_blinking_light"
 
 void CreateConVars()
 {
