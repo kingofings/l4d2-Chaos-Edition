@@ -92,3 +92,70 @@ public Action Command_Incap(int client, int args)
 		return Plugin_Handled;
 	}
 }
+
+public Action Command_Explode(int client, int args)
+{
+	float pos[3];
+	float vel[3];
+	vel[0] = 0.0;
+	vel[1] = 0.0;
+	vel[2] = 0.0;
+	int newPipe[30];
+	if(args < 1)
+	{
+		for (int i = 1; i <= sizeof(newPipe) -1; i++)
+		{
+			newPipe[i] = L4D_PipeBombPrj(client, pos, vel);
+			CreateParticle(newPipe[i], 0);
+		}
+		DataPack CommandExplode;
+		CreateDataTimer(0.5, Timer_CommandExplode, CommandExplode, TIMER_FLAG_NO_MAPCHANGE);
+		for (int i = 1; i <= sizeof(newPipe) -1; i++)
+		{
+			CommandExplode.WriteCell(EntIndexToEntRef(newPipe[i]));
+		}
+		for(int i = 1; i <= MaxClients; i++)
+		{
+			if(i >= 1 && i <= MaxClients && IsClientInGame(i))
+			{
+				EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+				EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+				EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+			}
+		}
+		return Plugin_Handled;
+	}
+	
+	char arg1[33];
+	
+	GetCmdArg(1, arg1, sizeof(arg1));
+	int owner = FindTarget(client, arg1);
+	if(owner <= COMMAND_TARGET_NONE)
+	{
+		ReplyToTargetError(client, owner);
+		return Plugin_Handled;
+	}
+
+	GetEntPropVector(owner, Prop_Send, "m_vecOrigin", pos);
+	for (int i = 1; i <= sizeof(newPipe) -1; i++)
+	{
+		newPipe[i] = L4D_PipeBombPrj(owner, pos, vel);
+		CreateParticle(newPipe[i], 0);
+	}
+	DataPack CommandExplode;
+	CreateDataTimer(0.5, Timer_CommandExplode, CommandExplode, TIMER_FLAG_NO_MAPCHANGE);
+	for (int i = 1; i <= sizeof(newPipe) -1; i++)
+	{
+		CommandExplode.WriteCell(EntIndexToEntRef(newPipe[i]));
+	}
+	for(int i = 1; i <= MaxClients; i++)
+	{
+		if(i >= 1 && i <= MaxClients && IsClientInGame(i))
+		{
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		}
+	}
+	return Plugin_Handled;
+}

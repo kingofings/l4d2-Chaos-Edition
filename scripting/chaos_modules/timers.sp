@@ -212,16 +212,28 @@ public Action Timer_ResetNoFall(Handle NFReset, any clientid)
 	}
 }
 
-public Action Timer_DemoKaboom(Handle timer, int serial)
+public Action Timer_DemoKaboom(Handle timer)
 {
-	int client = GetClientFromSerial(serial);
-	if(client >= 1 && client <= MaxClients && IsClientInGame(client))
+	for(int i = 1; i <= MaxClients; i++)
 	{
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 104, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/demoman/kaboom.mp3", client, 105, SNDLEVEL_GUNFIRE, _, 1.0);
+		if(i >= 1 && i <= MaxClients && IsClientInGame(i))
+		{
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 103, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToClient(i, "kingo_chaos_edition/demoman/kaboom.mp3", i, 104, SNDLEVEL_GUNFIRE, _, 1.0);
+		}
+	}
+}
+
+public Action Timer_CommandExplode(Handle timer, DataPack CommandExplode)
+{
+	int newPipe[30];
+	CommandExplode.Reset();
+	for (int i = 1; i <= sizeof(newPipe) -1; i++)
+	{
+		newPipe[i] = EntRefToEntIndex(CommandExplode.ReadCell());
+		SDKCall(g_sdkcallExplodePipeBomb, newPipe[i]);
 	}
 }

@@ -28,6 +28,7 @@ public void OnPluginStart()
 {
 	RegAdminCmd("sm_yeet", Command_Yeet, ADMFLAG_CHEATS);
 	RegAdminCmd("sm_incap", Command_Incap, ADMFLAG_CHEATS);
+	RegAdminCmd("sm_explode", Command_Explode, ADMFLAG_CHEATS);
 	CreateConVars();
 	HookEvent("pills_used", Event_PillsUsed);
 	HookEvent("revive_end", Event_ReviveEnd);
@@ -89,7 +90,16 @@ public void OnPluginStart()
 	g_sdkcallOnRevive = EndPrepSDKCall();
 	if(!g_sdkcallOnRevive)
 		SetFailState("Failed to Prepare SDKCall %s signature broken?", "CTerrorPlayer::OnRevived()");
+	
+	//Explode Pipebombs
+	StartPrepSDKCall(SDKCall_Entity);
+	PrepSDKCall_SetFromConf(hGameConf, SDKConf_Signature, "CPipeBombProjectile::Detonate()");
+	g_sdkcallExplodePipeBomb = EndPrepSDKCall();
+	if(!g_sdkcallExplodePipeBomb)
+		SetFailState("Failed to Prepare SDKCall %s signature broken?", "CPipeBombProjectile::Detonate()");
+		
 	delete hGameConf;
+		
 }
 
 public void OnMapStart()

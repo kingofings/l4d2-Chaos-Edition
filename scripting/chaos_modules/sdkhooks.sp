@@ -20,7 +20,6 @@ public Action OnPipeBombThink(int entity)
 		float pos[3];
 		GetEntPropVector(entity, Prop_Send, "m_vecOrigin", pos);
 		GetEntPropVector(entity, Prop_Send, "m_vecVelocity", vel);
-		PrintToChatAll("Pipebomb spawned, Velocity: %f, %f, %f", vel[0], vel[1], vel[2]);
 		int owner = GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity");
 		if(g_demoManActive[owner])
 		{
@@ -98,7 +97,7 @@ public Action OnPipeBombThink(int entity)
 				CreateParticle(newPipe[i], 0);
 				SetEntPropFloat(newPipe[i], Prop_Data, "m_flDetonateTime", GetEngineTime() + 7.0);
 			}
-			CreateTimer(5.5, Timer_DemoKaboom, GetClientSerial(owner), TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(5.5, Timer_DemoKaboom, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
 	SDKUnhook(entity, SDKHook_Think, OnPipeBombThink);
