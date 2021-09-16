@@ -141,7 +141,12 @@ public MRESReturn OnPipeBombSpawnPost(int pipebomb, Handle hParams)
 				SDKHook(pipebomb, SDKHook_Think, OnDemolitionMan);
 				
 			if(GetConVarFloat(c_throwYourSelfChance) > ChanceThrow || GetConVarFloat(c_throwYourSelfChance) == 1.0)
+			{
 				SDKHook(pipebomb, SDKHook_Think, OnThrowYourself);
+				EmitSoundToAll("kingo_chaos_edition/throw_yourself.mp3", owner, 100, SNDLEVEL_NORMAL, _, 1.0);
+				EmitSoundToAll("kingo_chaos_edition/throw_yourself.mp3", owner, 101, SNDLEVEL_NORMAL, _, 1.0); 
+				EmitSoundToAll("kingo_chaos_edition/throw_yourself.mp3", owner, 102, SNDLEVEL_NORMAL, _, 1.0); 
+			}
 		}
 	}
 	return MRES_Ignored;

@@ -122,6 +122,7 @@ public void OnMapStart()
 	PrecacheSound("music/gallery_music.mp3");
 	PrecacheSound("kingo_chaos_edition/tank/rock_ambulance.mp3");
 	PrecacheSound("kingo_chaos_edition/demoman/kaboom.mp3");
+	PrecacheSound("kingo_chaos_edition/throw_yourself.mp3");
 	
 	//Model Precache
 	
@@ -142,6 +143,7 @@ public void OnMapStart()
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/crit_grenade_launcher.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/tank/rock_ambulance.mp3");
 	AddFileToDownloadsTable("sound/kingo_chaos_edition/demoman/kaboom.mp3");
+	AddFileToDownloadsTable("sound/kingo_chaos_edition/throw_yourself.mp3");
 	
 	
 	char wak47[32] = "weapon_rifle_ak47";
