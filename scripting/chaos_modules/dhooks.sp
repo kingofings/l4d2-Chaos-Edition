@@ -110,7 +110,7 @@ public MRESReturn OnTankRockTouchPost(int rock, Handle hParams)
 	return MRES_Ignored;
 }
 
-public MRESReturn OnPipeBombDetonatedPost(int pipebomb, Handle hParams)
+/*public MRESReturn OnPipeBombDetonatedPost(int pipebomb, Handle hParams)
 {
 	if(!IsValidEntity(pipebomb))
 		return MRES_Ignored;
@@ -120,6 +120,29 @@ public MRESReturn OnPipeBombDetonatedPost(int pipebomb, Handle hParams)
 	{
 		PrintToServer("[CHAOS] Set Demoman of %N to false!", owner);
 		g_demoManActive[owner] = false;
+	}
+	return MRES_Ignored;
+}*/
+
+public MRESReturn OnPipeBombSpawnPost(int pipebomb, Handle hParams)
+{
+	if(!IsValidEntity(pipebomb))
+		return MRES_Ignored;
+	
+	int owner = GetEntPropEnt(pipebomb, Prop_Send, "m_hOwnerEntity");
+	if(owner >= 1 && owner <= MaxClients && IsClientInGame(owner) && IsPlayerAlive(owner))
+	{
+		if(!g_demoManActive[owner])
+		{
+			float ChanceDemo = GetRandomFloat(0.0, 1.0);
+			float ChanceThrow = GetRandomFloat(0.0, 1.0);
+			PrintToServer("[CHAOS] Pipebomb thrown, Demolition man: %0.2f, Throwyourself: %0.2f", ChanceDemo, ChanceThrow);
+			if(GetConVarFloat(c_demoManChance) > ChanceDemo || GetConVarFloat(c_demoManChance) == 1.0)
+				SDKHook(pipebomb, SDKHook_Think, OnDemolitionMan);
+				
+			if(GetConVarFloat(c_throwYourSelfChance) > ChanceThrow || GetConVarFloat(c_throwYourSelfChance) == 1.0)
+				SDKHook(pipebomb, SDKHook_Think, OnThrowYourself);
+		}
 	}
 	return MRES_Ignored;
 }

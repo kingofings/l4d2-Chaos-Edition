@@ -28,6 +28,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - No Jockey Resistance, Chance for a Jockey to fully remove the Survivors resistance when pouncing them.
 - Tank Cars! Chance for tanks to throw cars.
 - [WIP] Demolition Man! Chance to spawn additional pipebombs when using one.
+- Throw yourself! Swap places with your pipebomb!
 
 # Dependencies
 

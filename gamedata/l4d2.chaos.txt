@@ -72,6 +72,13 @@
 				"return"	"void"
 				"this"		"entity"
 			}
+			"CPipeBombProjectile::Spawn()"
+			{
+				"signature"	"CPipeBombProjectile::Spawn()"
+				"callconv"	"thiscall"
+				"return"	"void"
+				"this"		"entity"
+			}
 		}
 		"Signatures"
 		{
@@ -104,6 +111,11 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN19CPipeBombProjectile8DetonateEv"
+			}
+			"CPipeBombProjectile::Spawn()"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CPipeBombProjectile5SpawnEv"
 			}
 		}
 	}

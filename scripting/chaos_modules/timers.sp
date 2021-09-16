@@ -229,7 +229,7 @@ public Action Timer_DemoKaboom(Handle timer)
 
 public Action Timer_CommandExplode(Handle timer, DataPack CommandExplode)
 {
-	int newPipe[30];
+	int newPipe[18];
 	CommandExplode.Reset();
 	for (int i = 1; i <= sizeof(newPipe) -1; i++)
 	{

@@ -7,6 +7,8 @@ ConVar c_GrenadeTankDMG;
 ConVar c_JockeyControlMax;
 ConVar c_JockeyControlMin;
 ConVar c_JockeyControlVar;
+ConVar c_demoManChance;
+ConVar c_throwYourSelfChance;
 
 int g_GnomePickedUp[MAXPLAYERS + 1] = 0;
 int g_Cursed[MAXPLAYERS + 1] = 0;
@@ -41,12 +43,16 @@ bool g_demoManActive[MAXPLAYERS + 1] = false;
 
 void CreateConVars()
 {
+	AutoExecConfig_SetFile("chaos_edition");
 	CreateConVar("sm_chaos_edition_version", PLUGIN_VERSION, "Standard plugin version ConVar. Please don't change me!", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	c_demoManChance = AutoExecConfig_CreateConVar("sm_chaos_demolition_man_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	c_throwYourSelfChance = AutoExecConfig_CreateConVar("sm_chaos_throw_yourself_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_GrenadeLauncherDMG = FindConVar("grenadelauncher_damage");
 	c_GrenadeTankDMG = FindConVar("z_tank_grenade_damage");
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");
 	c_JockeyControlMin = FindConVar("z_jockey_control_min");
 	c_JockeyControlVar = FindConVar("z_jockey_control_variance");
+	AutoExecConfig_ExecuteFile();
 }
 void SetCritGrenade(int multiplier)
 {

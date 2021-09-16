@@ -1,14 +1,3 @@
-public void OnEntityCreated(int entity, const char[] classname)
-{
-	if(IsValidEntity(entity))
-	{
-		if(StrEqual(classname, "pipe_bomb_projectile"))
-		{
-			SDKHook(entity, SDKHook_Think, OnPipeBombThink);
-		}
-	}
-}
-
 public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadcast)
 {
 	char wak47[32] = "weapon_rifle_ak47";

@@ -3,6 +3,7 @@
 #include <sdkhooks>
 #include <left4dhooks>
 #include <dhooks>
+#include <autoexecconfig>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -79,10 +80,15 @@ public void OnPluginStart()
 		SetFailState("Failed to create detour %s", "CTankRock::BounceTouch()");
 	DHookEnableDetour(dtOnTankRockTouch, true, OnTankRockTouchPost);
 	
-	Handle dtOnPipeBombDetonate = DHookCreateFromConf(hGameConf, "CPipeBombProjectile::Detonate()");
+	/*Handle dtOnPipeBombDetonate = DHookCreateFromConf(hGameConf, "CPipeBombProjectile::Detonate()");
 	if(!dtOnPipeBombDetonate)
 		SetFailState("Failed to create detour %s", "CPipeBombProjectile::Detonate()");
-	DHookEnableDetour(dtOnPipeBombDetonate, true, OnPipeBombDetonatedPost);
+	DHookEnableDetour(dtOnPipeBombDetonate, true, OnPipeBombDetonatedPost);*/
+	
+	Handle dtOnPipeBombSpawn = DHookCreateFromConf(hGameConf, "CPipeBombProjectile::Spawn()");
+	if(!dtOnPipeBombSpawn)
+		SetFailState("Failed to create detour %s", "CPipeBombProjectile::Spawn()");
+	DHookEnableDetour(dtOnPipeBombSpawn, true, OnPipeBombSpawnPost);
 	
 	//Revive SDKCall
 	StartPrepSDKCall(SDKCall_Player);
