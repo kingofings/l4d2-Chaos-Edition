@@ -203,14 +203,14 @@ public Action Timer_ResetCarnivalRide(Handle HRestoreJResist, DataPack carnivalR
 	return Plugin_Continue;
 }
 
-public Action Timer_ResetNoFall(Handle NFReset, any clientid)
+/*public Action Timer_ResetNoFall(Handle NFReset, any clientid)
 {
 	int client = EntRefToEntIndex(clientid);
-	if(g_NoFall[client] == 1)
+	if(g_NoFall[client])
 	{
-		g_NoFall[client] = 0;
+		g_NoFall[client] = false;
 	}
-}
+}*/
 
 public Action Timer_DemoKaboom(Handle timer)
 {

@@ -47,7 +47,7 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("bot_player_replace", Event_BotPlayerReplace);
 	HookEvent("jockey_ride", Event_JockeyRide);
-	HookEvent("player_falldamage", Event_PlayerFallDamage);
+	//HookEvent("player_falldamage", Event_PlayerFallDamage);
 	for (int i = 1; i <= MaxClients; ++i)
 	{
 		if(IsClientInGame(i))
@@ -166,7 +166,7 @@ public void OnClientPutInServer(int client)
 {
 	g_GnomePickedUp[client] = 0;
 	g_Cursed[client] = 0;
-	g_NoFall[client] = 0;
+	g_NoFall[client] = false;
 	g_GodMode[client] = 0;
 	g_demoManActive[client] = false;
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);

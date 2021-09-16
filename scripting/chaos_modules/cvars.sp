@@ -9,10 +9,10 @@ ConVar c_JockeyControlMin;
 ConVar c_JockeyControlVar;
 ConVar c_demoManChance;
 ConVar c_throwYourSelfChance;
+ConVar c_yeetChance;
 
 int g_GnomePickedUp[MAXPLAYERS + 1] = 0;
 int g_Cursed[MAXPLAYERS + 1] = 0;
-int g_NoFall[MAXPLAYERS + 1] = 0;
 int g_GodMode[MAXPLAYERS + 1] = 0;
 
 int g_oldGrenadeLauncherDamage;
@@ -26,6 +26,7 @@ float g_JockeyControlVarOld;
 
 bool g_randomCritActive = false;
 bool g_demoManActive[MAXPLAYERS + 1] = false;
+bool g_NoFall[MAXPLAYERS + 1] = false;
 
 #define PLUGIN_VERSION "1.0"
 #define ZC_SMOKER 1
@@ -47,6 +48,7 @@ void CreateConVars()
 	CreateConVar("sm_chaos_edition_version", PLUGIN_VERSION, "Standard plugin version ConVar. Please don't change me!", FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	c_demoManChance = AutoExecConfig_CreateConVar("sm_chaos_demolition_man_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_throwYourSelfChance = AutoExecConfig_CreateConVar("sm_chaos_throw_yourself_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	c_yeetChance = AutoExecConfig_CreateConVar("sm_chaos_yeet_chance", "0.05", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_GrenadeLauncherDMG = FindConVar("grenadelauncher_damage");
 	c_GrenadeTankDMG = FindConVar("z_tank_grenade_damage");
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");

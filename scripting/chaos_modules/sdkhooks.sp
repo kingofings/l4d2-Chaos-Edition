@@ -1,6 +1,6 @@
 public Action OnTakeDamage(int client, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
-	if(g_NoFall[client] == 1 && CheckValidClient(client) && damagetype & DMG_FALL && GetClientTeam(client) == TEAM_SURVIVOR)
+	if(g_NoFall[client] && CheckValidClient(client) && damagetype & DMG_FALL && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
 		return Plugin_Handled;
 	}
@@ -96,4 +96,14 @@ public Action OnThrowYourself(int entity)
 		TeleportEntity(entity, throwerpos, NULL_VECTOR, pipevel);
 	}
 	SDKUnhook(entity, SDKHook_Think, OnThrowYourself);
+}
+
+public Action OnPreThinkYeet(int client)
+{
+	if(GetEntityFlags(client) & FL_ONGROUND && g_NoFall[client])
+	{
+		g_NoFall[client] = false;
+		PrintToServer("[CHAOS] Removed falling damage immunity from %N", client);
+		SDKUnhook(client, SDKHook_PreThink, OnPreThinkYeet);
+	}
 }

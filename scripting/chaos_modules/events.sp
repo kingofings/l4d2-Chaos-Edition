@@ -8,7 +8,7 @@ public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadc
 	{
 		g_GnomePickedUp[client] = 0;
 		g_Cursed[client] = 0;
-		g_NoFall[client] = 0;
+		g_NoFall[client] = false;
 		g_GodMode[client] = 0;
 		
 	}
@@ -27,7 +27,7 @@ public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcas
 	{
 		g_GnomePickedUp[client] = 0;
 		g_Cursed[client] = 0;
-		g_NoFall[client] = 0;
+		g_NoFall[client] = false;
 		g_GodMode[client] = 0;
 	}
 	g_randomCritActive = false;
@@ -363,17 +363,22 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 
 public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadcast)
 {
-	int RNG = GetRandomInt(1, 100);
+	float ChanceYeet = GetRandomFloat(0.0, 1.0);
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && RNG == 1)
-	{	
-		g_NoFall[client] = 1;
-		ServerCommand("sm_yeet \"#%N\" 0", client);
-		PrintHintText(client, "You rolled: YEET!");
-		PrintToChat(client, "You rolled: YEET!");
-		EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+	if(GetConVarFloat(c_yeetChance) > ChanceYeet || ChanceYeet == 1.0)
+	{
+		if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
+		{
+			g_NoFall[client] = true;
+			ServerCommand("sm_yeet \"#%N\" 0", client);
+			SDKHook(client, SDKHook_PreThink, OnPreThinkYeet);
+			PrintToServer("[CHAOS] Gave %N fall damage immunity!", client);
+			PrintHintText(client, "You rolled: YEET!");
+			PrintToChat(client, "You rolled: YEET!");
+			EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/yeet.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		}
 	}
 }
 
@@ -461,8 +466,10 @@ public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadca
 	}
 }
 //Reset Fall damage immunity after player got yeeted
+/*
 public Action Event_PlayerFallDamage(Event event, const char[] Name, bool bDontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	CreateTimer(0.1, Timer_ResetNoFall, EntIndexToEntRef(client), TIMER_FLAG_NO_MAPCHANGE);
 }
+*/
