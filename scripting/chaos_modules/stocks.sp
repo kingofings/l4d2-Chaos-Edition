@@ -18,6 +18,12 @@ stock bool CheckValidClient(int client)
 	return true;
 }
 
+stock void L4D2_IncapPlayer(int client)
+{
+	SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
+	SDKHooks_TakeDamage(client, client, client, float(GetEntProp(client, Prop_Send, "m_iHealth")), _, _, _, _);
+}
+
 /*  Thanks Silvers!
 	All of the below stocks are made by him!*/
 stock void CreateParticle(int target, int type)
@@ -52,10 +58,4 @@ stock void PrecacheParticle(const char[] sEffectName)
 		AddToStringTable(table, sEffectName);
 		LockStringTables(save);
 	}
-}
-
-stock void L4D2_IncapPlayer(int client)
-{
-	SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
-	SDKHooks_TakeDamage(client, client, client, float(GetEntProp(client, Prop_Send, "m_iHealth")), _, _, _, _);
 }
