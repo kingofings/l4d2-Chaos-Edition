@@ -146,7 +146,6 @@ public void OnMapStart()
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.13);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
-	
 	g_randomCritActive = false;
 }
 public void OnMapEnd()

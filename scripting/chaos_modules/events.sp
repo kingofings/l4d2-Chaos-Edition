@@ -20,7 +20,7 @@ public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcas
 {
 	PrintToServer("Round End Fired!");
 	char wak47[32] = "weapon_rifle_ak47";
-	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
+	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.13);
 	char awp[32] = "weapon_sniper_awp";
 	L4D2_SetIntWeaponAttribute(awp, L4D2IWA_Damage, 115);
 	for(int client = 1; client <= MaxClients; ++client)
@@ -403,7 +403,7 @@ public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadc
 		if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 		{
 			g_NoFall[client] = true;
-			ServerCommand("sm_yeet \"#%N\" 0", client);
+			RequestFrame(ProcessYeet, GetClientSerial(client));
 			SDKHook(client, SDKHook_PreThink, OnPreThinkYeet);
 			PrintToServer("[CHAOS] Gave %N fall damage immunity!", client);
 			PrintHintText(client, "You rolled: YEET!");
@@ -438,15 +438,22 @@ public Action Event_BoomerExploded(Event event, const char[] sName, bool bDontBr
 	{
 		int boomer = GetClientOfUserId(event.GetInt("userid"));
 		int attacker = GetClientOfUserId(event.GetInt("attacker"));
-		if(CheckValidClient(attacker))
+		if(CheckValidClient(attacker) && IsClientInGame(boomer) && boomer >= 1 && boomer <= MaxClients)
 		{
-			int comFlags = GetCommandFlags("give"); 
-			SetCommandFlags("give", comFlags & ~FCVAR_CHEAT);
+			float location[3];
+			GetEntPropVector(boomer, Prop_Send, "m_vecOrigin", location);
+			location[2] += 80;
 			for(int i = 0 ; i < 12; i++)
 			{
-				FakeClientCommand(boomer, "give weapon_vomitjar");
+				int entity = CreateEntityByName("weapon_vomitjar");
+				if(IsValidEntity(entity))
+				{
+					TeleportEntity(entity, location, NULL_VECTOR, NULL_VECTOR);
+					DispatchSpawn(entity);
+					ActivateEntity(entity);
+					RequestFrame(OnKarmaLaunchVomitJar, EntIndexToEntRef(entity));
+				}
 			}
-			SetCommandFlags("give", comFlags|FCVAR_CHEAT);
 			PrintHintText(attacker, "You rolled: Karma!");
 			PrintToChat(attacker, "You rolled: Karma!");
 		}

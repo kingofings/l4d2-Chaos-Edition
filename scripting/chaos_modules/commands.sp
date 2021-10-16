@@ -37,9 +37,9 @@ public Action Command_Yeet(int client, int args)
 	{
 		float velocity[3];
 		GetEntPropVector(client, Prop_Data, "m_vecVelocity", velocity);
-		velocity[0] += float(GetRandomInt(1, 800)); /* x coord */
-		velocity[1] += float(GetRandomInt(1, 800)); /* y coord */
-		velocity[2] += float(GetRandomInt(1, 800)); /* z coord */
+		velocity[0] += GetRandomFloat(-800.0, 800.0); /* x coord */
+		velocity[1] += GetRandomFloat(-800.0, 800.0); /* y coord */
+		velocity[2] += GetRandomFloat(1.0, 800.0); /* z coord */
 		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
 		return Plugin_Handled;
 	}
