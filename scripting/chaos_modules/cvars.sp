@@ -10,10 +10,23 @@ ConVar c_JockeyControlVar;
 ConVar c_demoManChance;
 ConVar c_throwYourSelfChance;
 ConVar c_yeetChance;
-
-int g_GnomePickedUp[MAXPLAYERS + 1] = 0;
-int g_Cursed[MAXPLAYERS + 1] = 0;
-int g_GodMode[MAXPLAYERS + 1] = 0;
+ConVar g_metalMarioChance;
+ConVar g_HealthRouletteChance;
+ConVar g_eyeForEyeChance;
+ConVar g_witchRevengeChance;
+ConVar g_pillsHereChance;
+ConVar g_starManGnomeChance;
+ConVar g_heartAttackChance;
+ConVar g_cursedChance;
+ConVar g_jumpScareChance;
+ConVar g_jumpScareSChance;
+ConVar g_csgoAWPChance;
+ConVar g_akJamChance;
+ConVar g_noodleArms;
+ConVar g_miracleChance;
+ConVar g_unwantedVisitorChance;
+ConVar g_karmaChance;
+ConVar g_noJockeyResistanceChance;
 
 int g_oldGrenadeLauncherDamage;
 int g_oldTankGrenadeDamage;
@@ -27,6 +40,9 @@ float g_JockeyControlVarOld;
 bool g_randomCritActive = false;
 bool g_demoManActive[MAXPLAYERS + 1] = false;
 bool g_NoFall[MAXPLAYERS + 1] = false;
+bool g_Cursed[MAXPLAYERS + 1] = false;
+bool g_GodMode[MAXPLAYERS + 1] = false;
+bool g_GnomePickedUp[MAXPLAYERS + 1] = false;
 
 #define PLUGIN_VERSION "1.0"
 #define ZC_SMOKER 1
@@ -49,6 +65,23 @@ void CreateConVars()
 	c_demoManChance = AutoExecConfig_CreateConVar("sm_chaos_demolition_man_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_throwYourSelfChance = AutoExecConfig_CreateConVar("sm_chaos_throw_yourself_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_yeetChance = AutoExecConfig_CreateConVar("sm_chaos_yeet_chance", "0.05", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_metalMarioChance = AutoExecConfig_CreateConVar("sm_chaos_metal_mario_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_HealthRouletteChance = AutoExecConfig_CreateConVar("sm_chaos_health_roulette_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_eyeForEyeChance = AutoExecConfig_CreateConVar("sm_chaos_eye_for_eye_chance", "0.20", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_witchRevengeChance = AutoExecConfig_CreateConVar("sm_chaos_witch_revenge_chance", "0.33", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_pillsHereChance = AutoExecConfig_CreateConVar("sm_chaos_pills_here_chance", "0.25", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_starManGnomeChance = AutoExecConfig_CreateConVar("sm_chaos_starman_gnome_chance", "0.04", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_heartAttackChance = AutoExecConfig_CreateConVar("sm_chaos_heart_attack_chance", "0.17", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_cursedChance = AutoExecConfig_CreateConVar("sm_chaos_cursed_chance", "0.17", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_jumpScareChance = AutoExecConfig_CreateConVar("sm_chaos_jumpscare_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_jumpScareSChance = AutoExecConfig_CreateConVar("sm_chaos_jumpscare_saferoom_chance", "0.20", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_csgoAWPChance = AutoExecConfig_CreateConVar("sm_chaos_csgo_awp_chance", "0.02", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_akJamChance = AutoExecConfig_CreateConVar("sm_chaos_ak_jam_chance", "0.002", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_noodleArms = AutoExecConfig_CreateConVar("sm_chaos_noodle_arms_chance", "0.625", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_miracleChance = AutoExecConfig_CreateConVar("sm_chaos_micacle_chance", "0.01", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_unwantedVisitorChance = AutoExecConfig_CreateConVar("sm_chaos_unwanted_visitor_chance", "0.20", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_karmaChance = AutoExecConfig_CreateConVar("sm_chaos_karma_chance", "0.625", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_noJockeyResistanceChance = AutoExecConfig_CreateConVar("sm_chaos_no_jockey_resist_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_GrenadeLauncherDMG = FindConVar("grenadelauncher_damage");
 	c_GrenadeTankDMG = FindConVar("z_tank_grenade_damage");
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");

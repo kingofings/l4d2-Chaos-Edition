@@ -1,6 +1,6 @@
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon) 
 {
-	if(g_Cursed[client] == 1)
+	if(g_Cursed[client])
 	{
 		velocity[0] = -velocity[0];
 		if(buttons & IN_FORWARD) 
@@ -15,7 +15,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
 		}
 	}
 		
-	if(g_Cursed[client] == 1)
+	if(g_Cursed[client])
 	{
 		velocity[1] = -velocity[1];
 		if(buttons & IN_MOVELEFT) 
@@ -93,7 +93,7 @@ public Action Command_Incap(int client, int args)
 	}
 }
 
-public Action Command_Explode(int client, int args)
+/*public Action Command_Explode(int client, int args)
 {
 	float pos[3];
 	float vel[3];
@@ -158,4 +158,4 @@ public Action Command_Explode(int client, int args)
 		}
 	}
 	return Plugin_Handled;
-}
+}*/

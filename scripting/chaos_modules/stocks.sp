@@ -53,3 +53,9 @@ stock void PrecacheParticle(const char[] sEffectName)
 		LockStringTables(save);
 	}
 }
+
+stock void L4D2_IncapPlayer(int client)
+{
+	SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
+	SDKHooks_TakeDamage(client, client, client, float(GetEntProp(client, Prop_Send, "m_iHealth")), _, _, _, _);
+}

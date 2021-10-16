@@ -14,6 +14,7 @@
 #include <chaos_modules/commands.sp>
 #include <chaos_modules/sdkhooks.sp>
 #include <chaos_modules/dhooks.sp>
+#include <chaos_modules/nextframe.sp>
 
 
 
@@ -29,7 +30,7 @@ public void OnPluginStart()
 {
 	RegAdminCmd("sm_yeet", Command_Yeet, ADMFLAG_CHEATS);
 	RegAdminCmd("sm_incap", Command_Incap, ADMFLAG_CHEATS);
-	RegAdminCmd("sm_explode", Command_Explode, ADMFLAG_CHEATS);
+	//RegAdminCmd("sm_explode", Command_Explode, ADMFLAG_CHEATS);
 	CreateConVars();
 	HookEvent("pills_used", Event_PillsUsed);
 	HookEvent("revive_end", Event_ReviveEnd);
@@ -159,10 +160,10 @@ public void OnMapEnd()
 
 public void OnClientPutInServer(int client)
 {
-	g_GnomePickedUp[client] = 0;
-	g_Cursed[client] = 0;
+	g_GnomePickedUp[client] = false;
+	g_Cursed[client] = false;
 	g_NoFall[client] = false;
-	g_GodMode[client] = 0;
+	g_GodMode[client] = false;
 	g_demoManActive[client] = false;
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }

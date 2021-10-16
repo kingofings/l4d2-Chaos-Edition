@@ -4,7 +4,7 @@ public Action OnTakeDamage(int client, int &attacker, int &inflictor, float &dam
 	{
 		return Plugin_Handled;
 	}
-	if(g_GodMode[client] == 1 && CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
+	if(g_GodMode[client] && CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
 		return Plugin_Handled;
 	}

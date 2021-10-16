@@ -44,7 +44,7 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 	}
 	else if (CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		g_GodMode[client] = 0;
+		g_GodMode[client] = false;
 		SetEntProp(client, Prop_Send, "m_iHealth", 50);
 		SetEntityRenderColor(client, 255, 255, 255, 255);
 		PrintHintText(client, "Metal Mario Expired!");
@@ -53,7 +53,7 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 	}
 	else
 	{
-		g_GodMode[client] = 0;
+		g_GodMode[client] = false;
 		PrintHintText(client, "Metal Mario Expired!");
 		PrintToChat(client, "Metal Mario Expired!");
 		return Plugin_Stop;
@@ -135,7 +135,7 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 	}
 	else if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		g_GodMode[client] = 0;
+		g_GodMode[client] = false;
 		PrintHintText(client, "You dropped the gnome! Invincibility expired!");
 		PrintToChat(client, "You dropped the gnome! Invincibility expired!");
 		SetEntProp(client, Prop_Send, "m_iHealth", 100);
@@ -167,7 +167,7 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
 {
 	int client = EntRefToEntIndex(clientid);
-	g_Cursed[client] = 0;
+	g_Cursed[client] = false;
 }
 
 //Carnival Ride
