@@ -175,9 +175,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 				SetCommandFlags("z_spawn_old", comFlags|FCVAR_CHEAT);
 				PrintHintText(client, "You rolled: Pills here!");
 				PrintToChat(client, "You rolled: Pills here!");
-				DataPack pack;
-				CreateDataTimer(0.4, PlayPillLaugh, pack, TIMER_FLAG_NO_MAPCHANGE);
-				pack.WriteCell(GetClientSerial(client));
+				CreateTimer(0.4, PlayPillLaugh, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
 			}
 		}
 		if(StrEqual(item, "gnome", false) && !g_GnomePickedUp[client])
@@ -240,7 +238,7 @@ public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBr
 			if(!g_Cursed[client])
 			{
 				g_Cursed[client] = true;
-				CreateTimer(10.0, Timer_RemoveCursed, EntIndexToEntRef(client), TIMER_FLAG_NO_MAPCHANGE);
+				CreateTimer(10.0, Timer_RemoveCursed, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
 				PrintHintText(client, "You rolled: Cursed!");
 				PrintToChat(client, "You rolled: Cursed!");
 			}

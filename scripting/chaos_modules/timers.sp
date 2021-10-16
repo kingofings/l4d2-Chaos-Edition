@@ -61,11 +61,11 @@ public Action Timer_MetalMario(Handle PTimer, DataPack pack)
 	return Plugin_Continue;
 }
 
-public Action PlayPillLaugh(Handle LTimer, DataPack pack)
+public Action PlayPillLaugh(Handle LTimer, int serial)
 {
-	pack.Reset();
-	int client = GetClientFromSerial(pack.ReadCell());
-	EmitSoundToAll("player/survivor/voice/manager/taunt07.wav", client);
+	int client = GetClientFromSerial(serial);
+	if(client >= 1 && client <= MaxClients && IsClientInGame(client))
+		EmitSoundToAll("player/survivor/voice/manager/taunt07.wav", client);
 }
 
 public Action SetAWP(Handle SAWPTimer)
@@ -86,7 +86,7 @@ public Action ResetAKJam(Handle AKTimer)
 	L4D2_SetFloatWeaponAttribute(wak47, L4D2FWA_CycleTime, 0.129999);
 	for (int i = 1; i <= MaxClients; ++i)
 	{
-		if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == 2)
+		if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i) && GetClientTeam(i) == TEAM_SURVIVOR)
 		{
 			PrintHintText(i, "Jammed AK-47 Expired! Shove to fire again!");
 			PrintToChatAll("Jammed AK-47 Expired! Shove to fire again!");
@@ -97,18 +97,18 @@ public Action ResetAKJam(Handle AKTimer)
 public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
-	int timerArray[2];
-	timerArray[0] = GetClientFromSerial(gnomeStar.ReadCell());
-	timerArray[1] = EntRefToEntIndex(gnomeStar.ReadCell());
-	int client = timerArray[0];
-	int activeWeapon = timerArray[1];
+	int client = GetClientFromSerial(gnomeStar.ReadCell());
+	int activeWeapon = EntRefToEntIndex(gnomeStar.ReadCell());
 	
-	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
-	if(CheckValidClient(client) && GetClientTeam(client) == 2 && activeWeapon == currentActiveWeapon)
+	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
+		int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
+		if(activeWeapon == currentActiveWeapon)
+		{
+			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/gnome_starman.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
+		}
 	}
 	return Plugin_Continue;
 }
@@ -116,22 +116,22 @@ public Action Timer_StarmanReapply(Handle StarRTimer, DataPack gnomeStar)
 public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 {
 	gnomeStar.Reset();
-	int timerArray[2];
-	timerArray[0] = GetClientFromSerial(gnomeStar.ReadCell());
-	timerArray[1] = EntRefToEntIndex(gnomeStar.ReadCell());
-	int client = timerArray[0];
-	int activeWeapon = timerArray[1];
-	int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
+	int client = GetClientFromSerial(gnomeStar.ReadCell());
+	int activeWeapon = EntRefToEntIndex(gnomeStar.ReadCell());
 	int RNGRed = GetRandomInt(1, 255);
 	int RNGGreen = GetRandomInt(1, 255);
 	int RNGBlue = GetRandomInt(1, 255);
 	int RNGHealth = GetRandomInt(1, 50);
-	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR && activeWeapon == currentActiveWeapon)
+	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		SetEntProp(client, Prop_Send, "m_iHealth", RNGHealth);
-		SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
-		SetEntPropFloat(client, Prop_Send, "m_healthBufferTime", GetGameTime());
-		SetEntityRenderColor(client, RNGRed, RNGGreen, RNGBlue, 255);
+		int currentActiveWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
+		if(activeWeapon == currentActiveWeapon)
+		{
+			SetEntProp(client, Prop_Send, "m_iHealth", RNGHealth);
+			SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 50.0);
+			SetEntPropFloat(client, Prop_Send, "m_healthBufferTime", GetGameTime());
+			SetEntityRenderColor(client, RNGRed, RNGGreen, RNGBlue, 255);
+		}
 	}
 	else if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
@@ -149,7 +149,6 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 			KillTimer(H_StarManReapply);
 			H_StarManReapply = INVALID_HANDLE;
 		}
-		
 		return Plugin_Stop;
 	}
 	else
@@ -164,10 +163,11 @@ public Action Timer_GnomeStarman(Handle StarManTimer, DataPack gnomeStar)
 	return Plugin_Continue;
 }
 //Cursed
-public Action Timer_RemoveCursed(Handle HRemoveCurse, any clientid)
+public Action Timer_RemoveCursed(Handle HRemoveCurse, int serial)
 {
-	int client = EntRefToEntIndex(clientid);
-	g_Cursed[client] = false;
+	int client = GetClientFromSerial(serial);
+	if(client >= 1 && client <= MaxClients && IsClientInGame(client))
+		g_Cursed[client] = false;
 }
 
 //Carnival Ride

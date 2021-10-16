@@ -101,7 +101,6 @@ public void OnPluginStart()
 		SetFailState("Failed to Prepare SDKCall %s signature broken?", "CPipeBombProjectile::Detonate()");
 		
 	delete hGameConf;
-		
 }
 
 public void OnMapStart()

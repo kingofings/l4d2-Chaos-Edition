@@ -17,7 +17,6 @@ public void OnKarmaLaunchVomitJar(int entityRefrence)
 		velocity[1] = GetRandomFloat(-500.0, 500.0);
 		velocity[2] = GetRandomFloat(50.0, 500.0);
 		TeleportEntity(entity, NULL_VECTOR, NULL_VECTOR, velocity);
-		PrintToServer("Velocity: %f, %f, %f", velocity[0], velocity[1], velocity[2]);
 	}
 }
 
