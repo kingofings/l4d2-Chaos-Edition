@@ -107,3 +107,12 @@ public Action OnPreThinkYeet(int client)
 		SDKUnhook(client, SDKHook_PreThink, OnPreThinkYeet);
 	}
 }
+
+public Action OnGrenadeTouch(int entity)
+{
+	if(g_randomCritActive)
+	{
+		UnSetCritGrenade();
+		g_randomCritActive = false;
+	}
+}

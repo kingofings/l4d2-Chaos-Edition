@@ -7,6 +7,7 @@ public MRESReturn OnGrenadeLauncherProjSpawnPre(int projectile, Handle hParams)
 	int client = GetEntPropEnt(projectile, Prop_Send, "m_hOwnerEntity");
 	if(RNGCrit == 1 && !g_randomCritActive)
 	{
+		SDKHook(projectile, SDKHook_StartTouchPost, OnGrenadeTouch);
 		g_randomCritActive = true;
 		SetCritGrenade(3);
 		PrintHintText(client, "You rolled: Random Crit!");

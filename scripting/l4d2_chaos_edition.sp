@@ -59,11 +59,6 @@ public void OnPluginStart()
 	Handle hGameConf = new GameData("l4d2.chaos");
 	if(!hGameConf)
 		SetFailState("Could not find chaos gamedata!");
-		
-	Handle dtGrenadeProjExplode = DHookCreateFromConf(hGameConf, "CGrenadeLauncher_Projectile::ExplodeTouch()");
-	if(!dtGrenadeProjExplode)
-		SetFailState("Failed to create detour %s", "CGrenadeLauncher_Projectile::ExplodeTouch()");
-	DHookEnableDetour(dtGrenadeProjExplode, true, OnGrenadeLauncherProjExplodePost);
 	
 	Handle dtGrenadeProjSpawned = DHookCreateFromConf(hGameConf, "CGrenadeLauncher_Projectile::Spawn()");
 	if(!dtGrenadeProjSpawned)
