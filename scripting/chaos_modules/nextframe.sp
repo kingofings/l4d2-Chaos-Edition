@@ -1,6 +1,6 @@
 public void ProcessIncapFrame(int serial)
 {
-	int client = GetClientSerial(serial);
+	int client = GetClientFromSerial(serial);
 	if(CheckValidClient(client))
 	{
 		L4D2_IncapPlayer(client);

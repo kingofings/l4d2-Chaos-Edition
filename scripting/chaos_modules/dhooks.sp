@@ -3,28 +3,21 @@ public MRESReturn OnGrenadeLauncherProjSpawnPre(int projectile, Handle hParams)
 	if(!IsValidEntity(projectile))
 		return MRES_Ignored;
 	
-	int RNGCrit = GetRandomInt(1, 50);
+	float chance = GetRandomFloat(0.0, 1.0);
 	int client = GetEntPropEnt(projectile, Prop_Send, "m_hOwnerEntity");
-	if(RNGCrit == 1 && !g_randomCritActive)
+	if(g_randomCritChance.FloatValue > chance || chance == 1.0)
 	{
-		SDKHook(projectile, SDKHook_StartTouchPost, OnGrenadeTouch);
-		g_randomCritActive = true;
-		SetCritGrenade(3);
-		PrintHintText(client, "You rolled: Random Crit!");
-		PrintToChat(client, "You rolled: Random Crit!");
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
-		EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
-	}
-	return MRES_Ignored;
-}
-
-public MRESReturn OnGrenadeLauncherProjExplodePost(int projectile, Handle hParams)
-{
-	if(g_randomCritActive)
-	{
-		UnSetCritGrenade();
-		g_randomCritActive = false;
+		if(!g_randomCritActive && CheckValidClient(client))
+		{
+			SDKHook(projectile, SDKHook_StartTouchPost, OnGrenadeTouch);
+			g_randomCritActive = true;
+			SetCritGrenade(3);
+			PrintHintText(client, "You rolled: Random Crit!");
+			PrintToChat(client, "You rolled: Random Crit!");
+			EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 100, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 101, SNDLEVEL_GUNFIRE, _, 1.0);
+			EmitSoundToAll("kingo_chaos_edition/crit_grenade_launcher.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
+		}
 	}
 	return MRES_Ignored;
 }
@@ -37,11 +30,9 @@ public MRESReturn OnTankRockReleasePost(int rock, Handle hParams)
 		return MRES_Ignored;
 	}
 	
-	int RNG = GetRandomInt(1, 5);
-	PrintToServer("Tank rolled a %i", RNG);
-	if(RNG == 1)
+	float chance = GetRandomFloat(0.0, 1.0);
+	if(g_tankRockChance.FloatValue > chance || chance == 1.0)
 	{
-		
 		int RNGCar = GetRandomInt(1, 2);
 		if(RNGCar == 1)
 		{

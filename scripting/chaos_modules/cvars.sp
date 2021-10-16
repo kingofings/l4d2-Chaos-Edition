@@ -27,6 +27,8 @@ ConVar g_miracleChance;
 ConVar g_unwantedVisitorChance;
 ConVar g_karmaChance;
 ConVar g_noJockeyResistanceChance;
+ConVar g_randomCritChance;
+ConVar g_tankRockChance;
 
 int g_oldGrenadeLauncherDamage;
 int g_oldTankGrenadeDamage;
@@ -82,6 +84,8 @@ void CreateConVars()
 	g_unwantedVisitorChance = AutoExecConfig_CreateConVar("sm_chaos_unwanted_visitor_chance", "0.20", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_karmaChance = AutoExecConfig_CreateConVar("sm_chaos_karma_chance", "0.625", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_noJockeyResistanceChance = AutoExecConfig_CreateConVar("sm_chaos_no_jockey_resist_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_randomCritChance = AutoExecConfig_CreateConVar("sm_chaos_random_crit_chance", "0.12", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_tankRockChance = AutoExecConfig_CreateConVar("sm_chaos_tank_rock_chance", "0.20", "Chance is pecentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	c_GrenadeLauncherDMG = FindConVar("grenadelauncher_damage");
 	c_GrenadeTankDMG = FindConVar("z_tank_grenade_damage");
 	c_JockeyControlMax = FindConVar("z_jockey_control_max");
