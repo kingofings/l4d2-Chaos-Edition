@@ -7,6 +7,7 @@
 
 #pragma semicolon 1
 #pragma newdecls required
+
 #include <chaos_modules/cvars.sp>
 #include <chaos_modules/stocks.sp> 
 #include <chaos_modules/events.sp>
@@ -15,8 +16,6 @@
 #include <chaos_modules/sdkhooks.sp>
 #include <chaos_modules/dhooks.sp>
 #include <chaos_modules/nextframe.sp>
-
-
 
 public Plugin myinfo = 
 {
