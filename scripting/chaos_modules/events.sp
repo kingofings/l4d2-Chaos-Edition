@@ -10,6 +10,8 @@ public Action Event_RoundStart(Event event, const char[] sName, bool bDontBroadc
 		g_Cursed[client] = false;
 		g_NoFall[client] = false;
 		g_GodMode[client] = false;
+		g_movieActive[client] = false;
+		g_suppressiveFire[client] = false;
 		
 	}
 	g_randomCritActive = false;
@@ -29,6 +31,8 @@ public Action Event_RoundEnd(Event event, const char[] sName, bool bDontBroadcas
 		g_Cursed[client] = false;
 		g_NoFall[client] = false;
 		g_GodMode[client] = false;
+		g_movieActive[client] = false;
+		g_suppressiveFire[client] = false;
 	}
 	g_randomCritActive = false;
 	PrintToServer("[CHAOS] Reset Global Variables of all Players");
@@ -42,7 +46,7 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 	float ChanceHealthRoulette = GetRandomFloat(0.0, 1.0);
 	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		if(g_metalMarioChance.FloatValue > ChanceMetalMario || ChanceMetalMario == 1.0)
+		if(g_metalMarioChance.FloatValue == 1.0 || g_metalMarioChance.FloatValue > ChanceMetalMario)
 		{
 			g_GodMode[client] = true;
 			float EngineTime = GetEngineTime() + 10.0;
@@ -58,7 +62,7 @@ public Action Event_PillsUsed(Event event, const char[] sName, bool bDontBroadca
 			EmitSoundToAll("kingo_chaos_edition/metal_mario.mp3", client, 102, SNDLEVEL_GUNFIRE, _, 1.0);
 			EmitSoundToAll("kingo_chaos_edition/metal_mario.mp3", client, 103, SNDLEVEL_GUNFIRE, _, 1.0);
 		}
-		if(g_HealthRouletteChance.FloatValue > ChanceHealthRoulette || ChanceHealthRoulette == 1.0)
+		if(g_HealthRouletteChance.FloatValue == 1.0 || g_HealthRouletteChance.FloatValue > ChanceHealthRoulette)
 		{
 			float EngineTime = GetEngineTime() + 3.45;
 			DataPack health_roulette;
@@ -83,7 +87,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 	float EyeForEyeChance = GetRandomFloat(0.0, 1.0);
 	if(CheckValidClient(victim) && GetClientTeam(victim) == TEAM_SURVIVOR)
 	{
-		if(g_eyeForEyeChance.FloatValue > EyeForEyeChance || EyeForEyeChance == 1.0)
+		if(g_eyeForEyeChance.FloatValue == 1.0 || g_eyeForEyeChance.FloatValue > EyeForEyeChance)
 		{
 			RequestFrame(ProcessIncapFrame, GetClientSerial(client));
 			Event eventincap = CreateEvent("player_incapacitated");
@@ -93,7 +97,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 				eventincap.SetInt("attacker", GetClientUserId(victim));
 				for (int i = 1; i <= MaxClients; ++i)
 				{
-					if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
+					if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i)) //l4d2 does not support sending events to FakeClients
 						eventincap.FireToClient(i);
 				}
 				delete eventincap;
@@ -107,7 +111,7 @@ public Action Event_ReviveEnd(Event event, const char[] sName, bool bDontBroadca
 				eventRevive.SetInt("attacker", GetClientUserId(client));
 				for (int i = 1; i <= MaxClients; ++i)
 				{
-					if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i))
+					if(i >= 1 && i <= MaxClients && IsClientInGame(i) && !IsFakeClient(i)) //l4d2 does not support sending events to FakeClients
 						eventRevive.FireToClient(i);
 				}
 				delete eventRevive;
@@ -138,7 +142,7 @@ public Action Event_WitchKilled(Event event, const char[] sName, bool bDontBroad
 		if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 		{
 			float witchRevengeChance = GetRandomFloat(0.0, 1.0);
-			if(g_witchRevengeChance.FloatValue > witchRevengeChance || witchRevengeChance == 1.0)
+			if(g_witchRevengeChance.FloatValue > witchRevengeChance || g_witchRevengeChance.FloatValue == 1.0)
 			{
 				float location[3];
 				GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
@@ -166,7 +170,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 		if(StrEqual(item, "pain_pills"))
 		{
 			float pillsHereChance = GetRandomFloat(0.0, 1.0);
-			if(g_pillsHereChance.FloatValue > pillsHereChance || pillsHereChance == 1.0)
+			if(g_pillsHereChance.FloatValue > pillsHereChance || g_pillsHereChance.FloatValue == 1.0)
 			{
 				int comFlags = GetCommandFlags("z_spawn_old"); 
 				SetCommandFlags("z_spawn_old", comFlags & ~FCVAR_CHEAT); 
@@ -184,7 +188,7 @@ public Action Event_ItemPickup(Event event, const char[] sName, bool bDontBroadc
 			g_GnomePickedUp[client] = true;
 			PrintToServer("[CHAOS] Client %N picked up the gnome for the first time", client);
 		
-			if(g_starManGnomeChance.FloatValue > starManChance || starManChance == 1.0)
+			if(g_starManGnomeChance.FloatValue > starManChance || g_starManGnomeChance.FloatValue == 1.0)
 			{
 				g_GodMode[client] = true;
 				int activeWeapon = GetEntProp(client, Prop_Send, "m_hActiveWeapon");
@@ -227,13 +231,13 @@ public Action Event_AdrenalineUsed(Event event, const char[] sName, bool bDontBr
 	
 	if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
-		if(g_heartAttackChance.FloatValue > heartAttackChance || heartAttackChance == 1.0)
+		if(g_heartAttackChance.FloatValue > heartAttackChance || g_heartAttackChance.FloatValue == 1.0)
 		{
 			RequestFrame(ProcessIncapFrame, GetClientSerial(client));
 			PrintHintText(client, "You rolled: Heart attack!");
 			PrintToChat(client, "You rolled: Heart attack!");
 		}
-		if(g_cursedChance.FloatValue > cursedChance || cursedChance == 1.0)
+		if(g_cursedChance.FloatValue > cursedChance || g_cursedChance.FloatValue == 1.0)
 		{
 			if(!g_Cursed[client])
 			{
@@ -255,7 +259,7 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 		float chance = GetRandomFloat(0.0, 1.0);
 		if(!sDoor)
 		{
-			if(g_jumpScareChance.FloatValue > chance || chance == 1.0)
+			if(g_jumpScareChance.FloatValue > chance || g_jumpScareChance.FloatValue == 1.0)
 			{
 				float location[3];
 				GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
@@ -271,7 +275,7 @@ public Action Event_DoorOpen(Event event, const char[] sName, bool bDontBroadcas
 		}
 		else
 		{
-			if(g_jumpScareSChance.FloatValue > chance || chance == 1.0)
+			if(g_jumpScareSChance.FloatValue > chance || g_jumpScareSChance.FloatValue == 1.0)
 			{
 				float location[3];
 				GetEntPropVector(client, Prop_Send, "m_vecOrigin", location);
@@ -297,7 +301,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	if(StrEqual(weapon, "rifle_ak47") && CheckValidClient(client))
 	{
 		float chance = GetRandomFloat(0.0, 1.0);
-		if(g_akJamChance.FloatValue > chance || chance == 1.0)
+		if(g_akJamChance.FloatValue > chance || g_akJamChance.FloatValue == 1.0)
 		{
 			char ak47[32] = "weapon_rifle_ak47";
 			L4D2_SetFloatWeaponAttribute(ak47, L4D2FWA_CycleTime, 20.0);
@@ -315,7 +319,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 	if(StrEqual(weapon, "sniper_awp") && CheckValidClient(client) && L4D2_GetIntWeaponAttribute("weapon_sniper_awp", L4D2IWA_Damage) != 10000)
 	{
 		float chance = GetRandomFloat(0.0, 1.0);
-		if(g_csgoAWPChance.FloatValue > chance || chance == 1.0)
+		if(g_csgoAWPChance.FloatValue > chance || g_csgoAWPChance.FloatValue == 1.0)
 		{
 			CreateTimer(0.1, SetAWP, _, TIMER_FLAG_NO_MAPCHANGE);
 			for (int i = 1; i <= MaxClients; ++i)
@@ -347,7 +351,7 @@ public Action Event_WeaponFire(Event event, const char[] sName, bool bDontBroadc
 		if(slot != -1 && forceSwap != -1 && CheckValidClient(client))
 		{
 			float chance = GetRandomFloat(0.0, 1.0);
-			if(g_noodleArms.FloatValue > chance || chance == 1.0)
+			if(g_noodleArms.FloatValue > chance || g_noodleArms.FloatValue == 1.0)
 			{
 				SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", forceSwap); //Need to do this if you dont swap before removing weapon the server segfaults!
 				int wEntIndex = CreateEntityByName("weapon_pistol_magnum");
@@ -378,7 +382,7 @@ public Action Event_Incapped(Event event, const char[] sName, bool bDontBroadcas
 	if(client >= 1 && client <= MaxClients && IsClientInGame(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 	{
 		float chance = GetRandomFloat(0.0, 1.0);
-		if(g_miracleChance.FloatValue > chance || chance == 1.0)
+		if(g_miracleChance.FloatValue > chance || g_miracleChance.FloatValue == 1.0)
 		{
 			SDKCall(g_sdkcallOnRevive, client);
 			SetEntProp(client, Prop_Send, "m_iHealth", 100);
@@ -396,7 +400,7 @@ public Action Event_PlayerJump(Event event, const char[] sName, bool bDontBroadc
 {
 	float ChanceYeet = GetRandomFloat(0.0, 1.0);
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	if(GetConVarFloat(c_yeetChance) > ChanceYeet || ChanceYeet == 1.0)
+	if(GetConVarFloat(c_yeetChance) > ChanceYeet || GetConVarFloat(c_yeetChance) == 1.0)
 	{
 		if(CheckValidClient(client) && GetClientTeam(client) == TEAM_SURVIVOR)
 		{
@@ -418,7 +422,7 @@ public Action Event_SurvivorRescued(Event event, const char[] sName, bool bDontB
 {
 	int victim = GetClientOfUserId(event.GetInt("victim"));
 	float chance = GetRandomFloat(0.0, 1.0);
-	if(g_unwantedVisitorChance.FloatValue > chance || chance == 1.0)
+	if(g_unwantedVisitorChance.FloatValue > chance || g_unwantedVisitorChance.FloatValue == 1.0)
 	{
 		if(CheckValidClient(victim))
 		{
@@ -432,7 +436,7 @@ public Action Event_SurvivorRescued(Event event, const char[] sName, bool bDontB
 public Action Event_BoomerExploded(Event event, const char[] sName, bool bDontBroadcast)
 {
 	float chance = GetRandomFloat(0.0, 1.0);
-	if(g_karmaChance.FloatValue > chance || chance == 1.0)
+	if(g_karmaChance.FloatValue > chance || g_karmaChance.FloatValue == 1.0)
 	{
 		int boomer = GetClientOfUserId(event.GetInt("userid"));
 		int attacker = GetClientOfUserId(event.GetInt("attacker"));
@@ -485,7 +489,7 @@ public Action Event_JockeyRide(Event event, const char[] Name, bool bDontBroadca
 	int attacker = GetClientOfUserId(event.GetInt("userid"));	
 	float chance = GetRandomFloat(0.0, 1.0);
 	
-	if(g_noJockeyResistanceChance.FloatValue > chance || chance == 1.0)
+	if(g_noJockeyResistanceChance.FloatValue > chance || g_noJockeyResistanceChance.FloatValue == 1.0)
 	{
 		if(CheckValidClient(attacker))
 		{

@@ -9,6 +9,11 @@
 #pragma newdecls required
 
 #include <chaos_modules/cvars.sp>
+#include <rolls/movie_logic.sp>
+#include <rolls/insult_to_injury.sp>
+#include <rolls/groovy.sp>
+#include <rolls/suppressive_fire.sp>
+//#include <rolls/way_of_the_samurai.sp> need proper detection for katana pickup
 #include <chaos_modules/stocks.sp> 
 #include <chaos_modules/events.sp>
 #include <chaos_modules/timers.sp>
@@ -29,7 +34,7 @@ public void OnPluginStart()
 {
 	RegAdminCmd("sm_yeet", Command_Yeet, ADMFLAG_CHEATS);
 	RegAdminCmd("sm_incap", Command_Incap, ADMFLAG_CHEATS);
-	//RegAdminCmd("sm_explode", Command_Explode, ADMFLAG_CHEATS);
+	RegAdminCmd("sm_explode", Command_Explode, ADMFLAG_CHEATS);
 	CreateConVars();
 	HookEvent("pills_used", Event_PillsUsed);
 	HookEvent("revive_end", Event_ReviveEnd);
@@ -38,6 +43,8 @@ public void OnPluginStart()
 	HookEvent("adrenaline_used", Event_AdrenalineUsed);
 	HookEvent("door_open", Event_DoorOpen);
 	HookEvent("weapon_fire", Event_WeaponFire);
+	HookEvent("weapon_fire", Event_MovieLogic, EventHookMode_Post);
+	HookEvent("weapon_fire", Event_SuppressiveFirePost, EventHookMode_Post);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_incapacitated", Event_Incapped);
 	HookEvent("round_start", Event_RoundStart);
@@ -47,6 +54,14 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("bot_player_replace", Event_BotPlayerReplace);
 	HookEvent("jockey_ride", Event_JockeyRide);
+	HookEvent("charger_carry_start", Event_ChargerCarryStartPost, EventHookMode_Post);
+	HookEvent("player_death", Event_SpecialInfectedDeathPost, EventHookMode_Post);
+	HookEvent("weapon_fire_on_empty", Event_SuppressiveFireEndPost, EventHookMode_Post);
+	HookEvent("player_incapacitated", Event_SuppressiveFireEndPost, EventHookMode_Post);
+	HookEvent("player_death", Event_SuppressiveFireEndPost, EventHookMode_Post);
+	/*HookEvent("player_hurt", Event_WayOfTheSamuraiPost, EventHookMode_Post);
+	HookEvent("item_pickup", Event_WayOfTheSamuraiCheckKatanaPickUpPost, EventHookMode_Post);
+	HookEvent("weapon_drop", Event_WayOfTheSamuraiCheckKatanaDropPost, EventHookMode_Post);*/
 	//HookEvent("player_falldamage", Event_PlayerFallDamage);
 	for (int i = 1; i <= MaxClients; ++i)
 	{
@@ -162,5 +177,43 @@ public void OnClientPutInServer(int client)
 	g_NoFall[client] = false;
 	g_GodMode[client] = false;
 	g_demoManActive[client] = false;
+	g_movieActive[client] = false;
+	g_timeMovie[client] = 0.0;
+	g_suppressiveFire[client] = false;
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+}
+
+public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon) 
+{
+	if(g_Cursed[client])
+	{
+		velocity[0] = -velocity[0];
+		if(buttons & IN_FORWARD) 
+		{
+			buttons &= ~IN_FORWARD;
+			buttons |= IN_BACK;	
+		}
+		else if(buttons & IN_BACK)
+		{
+			buttons &= ~IN_BACK;
+			buttons |= IN_FORWARD;
+		}
+	}
+		
+	if(g_Cursed[client])
+	{
+		velocity[1] = -velocity[1];
+		if(buttons & IN_MOVELEFT) 
+		{
+			buttons &= ~IN_MOVELEFT;
+			buttons |= IN_MOVERIGHT;
+		}	
+		else if(buttons & IN_MOVERIGHT) 
+		{
+			buttons &= ~IN_MOVERIGHT;
+			buttons |= IN_MOVELEFT;
+		}
+	}
+	if(g_suppressiveFire[client])
+		buttons |= IN_ATTACK;
 }

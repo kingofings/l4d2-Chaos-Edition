@@ -236,4 +236,7 @@ public Action Timer_CommandExplode(Handle timer, DataPack CommandExplode)
 		newPipe[i] = EntRefToEntIndex(CommandExplode.ReadCell());
 		SDKCall(g_sdkcallExplodePipeBomb, newPipe[i]);
 	}
+	int client = GetClientFromSerial(CommandExplode.ReadCell());
+	g_demoManActive[client] = false;
+	
 }

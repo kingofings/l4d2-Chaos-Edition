@@ -1,36 +1,3 @@
-public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon) 
-{
-	if(g_Cursed[client])
-	{
-		velocity[0] = -velocity[0];
-		if(buttons & IN_FORWARD) 
-		{
-			buttons &= ~IN_FORWARD;
-			buttons |= IN_BACK;	
-		}
-		else if(buttons & IN_BACK)
-		{
-			buttons &= ~IN_BACK;
-			buttons |= IN_FORWARD;
-		}
-	}
-		
-	if(g_Cursed[client])
-	{
-		velocity[1] = -velocity[1];
-		if(buttons & IN_MOVELEFT) 
-		{
-			buttons &= ~IN_MOVELEFT;
-			buttons |= IN_MOVERIGHT;
-		}	
-		else if(buttons & IN_MOVERIGHT) 
-		{
-			buttons &= ~IN_MOVERIGHT;
-			buttons |= IN_MOVELEFT;
-		}
-	}
-}
-
 public Action Command_Yeet(int client, int args)
 {
 	if(args < 1)
@@ -93,8 +60,9 @@ public Action Command_Incap(int client, int args)
 	}
 }
 
-/*public Action Command_Explode(int client, int args)
+public Action Command_Explode(int client, int args)
 {
+	g_demoManActive[client] = true;
 	float pos[3];
 	float vel[3];
 	vel[0] = 0.0;
@@ -114,6 +82,7 @@ public Action Command_Incap(int client, int args)
 		{
 			CommandExplode.WriteCell(EntIndexToEntRef(newPipe[i]));
 		}
+		CommandExplode.WriteCell(GetClientSerial(client));
 		for(int i = 1; i <= MaxClients; i++)
 		{
 			if(i >= 1 && i <= MaxClients && IsClientInGame(i))
@@ -158,4 +127,4 @@ public Action Command_Incap(int client, int args)
 		}
 	}
 	return Plugin_Handled;
-}*/
+}
