@@ -32,6 +32,7 @@ void Roll_MovieLogic(int client, const char[] weapon)
 
 static Action MovieLogicPreThink(int client)
 {
+    //needs cleanup
 	if(IsClientInGame(client) && IsPlayerAlive(client))
 	{
 		if(!g_bMovieActive[client])

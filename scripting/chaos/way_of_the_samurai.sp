@@ -1,3 +1,5 @@
+//needs full rewrite
+
 bool g_samuraiActive[MAXPLAYERS + 1] = false;
 bool g_hasKatana[MAXPLAYERS + 1] = false;
 float g_samuraiTime[MAXPLAYERS + 1] = 0.0;
