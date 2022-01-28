@@ -18,15 +18,21 @@
 #define ZC_CHARGER 6
 #define ZC_WITCH 7
 #define ZC_TANK 8
+
 #define SOUND_METAL_MARIO "kingo_chaos_edition/metal_mario.mp3"
+#define SOUND_HEALTH_ROULETTE "kingo_chaos_edition/health_roulette.mp3"
 
 #include <chaos/setup.sp>
+#include <chaos/sdkcalls.sp>
 #include <chaos/generic_events.sp>
 #include <chaos/groovy.sp>
 #include <chaos/movie_logic.sp>
 #include <chaos/insult_to_injury.sp>
 #include <chaos/suppressive_fire.sp>
 #include <chaos/metal_mario.sp>
+#include <chaos/health_roulette.sp>
+#include <chaos/eye_for_an_eye.sp>
+#include <chaos/witch_revenge.sp>
 
 public Plugin myinfo = 
 {
@@ -39,12 +45,19 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+    Handle hGameConf = new GameData("l4d2.chaos");
+    if(!hGameConf) SetFailState("Could not find l4d2 chaos edition Gamedata!");
+    Setup_SDKCalls(hGameConf);
     Setup_GenericEvents();
     Setup_Groovy();
     Setup_MovieLogic();
     Setup_InsultToInjury();
     Setup_SuppressiveFire();
     Setup_MetalMario();
+    Setup_HealthRoulette();
+    Setup_EyeForAnEye();
+    Setup_WitchRevenge();
+    delete hGameConf;
 }
 
 public void OnMapStart()
@@ -53,10 +66,12 @@ public void OnMapStart()
     
     //Sound Precache
     PrecacheSound(SOUND_METAL_MARIO);
+    PrecacheSound(SOUND_HEALTH_ROULETTE);
     
     //Download Table
     
     AddFileToDownloadsTable("sound/kingo_chaos_edition/metal_mario.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
 }
 
 public void OnClientPutInServer(int client)
@@ -65,6 +80,8 @@ public void OnClientPutInServer(int client)
     Reset_SuppressiveFire(client);
     Reset_MetalMario(client);
     SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+    SDKHook(client, SDKHook_StartTouch, OnStartTouch);
+    SDKHook(client, SDKHook_Touch, OnStartTouch);
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
@@ -78,11 +95,38 @@ static Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {
     if (victim > 0 && victim <= MaxClients)
     {
-        if(IsPlayerMetalMario(victim))
+        if(IsPlayerMetalMario(victim) && damageType & ~DMG_FALL)
         {
             damage = 0.0;
             return Plugin_Changed;
         }
     }
     return Plugin_Continue;
+}
+
+static Action OnStartTouch(int entity, int client)
+{
+    if(client > 0 && client <= MaxClients)
+    {
+        if(IsPlayerMetalMario(client))
+        {
+            if (entity > MaxClients)
+            {
+                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);
+            }
+            else if (GetClientTeam(entity) != GetClientTeam(client))
+            {
+                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);  
+            }
+        }
+    }
+}
+
+public void OnEntityCreated(int entity, const char[] class)
+{
+    if(StrEqual(class, "infected", false))
+    {
+        SDKHook(entity, SDKHook_StartTouch, OnStartTouch);
+        SDKHook(entity, SDKHook_Touch, OnStartTouch);
+    }
 }

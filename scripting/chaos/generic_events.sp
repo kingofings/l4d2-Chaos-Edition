@@ -5,6 +5,8 @@ void Setup_GenericEvents()
     HookEvent("round_start", Event_Reset, EventHookMode_Post);
     HookEvent("round_end", Event_Reset, EventHookMode_Post);
     HookEvent("pills_used", Event_PillsUsedPost, EventHookMode_Post);
+    HookEvent("revive_end", Event_ReviveEndPost, EventHookMode_Post);
+    HookEvent("witch_killed", Event_WitchKilledPost, EventHookMode_Post);
 }
 
 static void Event_WeaponFirePost(Event event, const char[] name, bool bDontBroadcast)
@@ -60,5 +62,37 @@ static void Event_PillsUsedPost(Event event, const char[] name, bool bDontBroadc
     if(client > 0 && client <= MaxClients && IsClientInGame(client))
     {
         Roll_MetalMario(client);
+        Roll_HealthRoulette(client);
+    }
+}
+
+static void Event_ReviveEndPost(Event event, const char[] name, bool bDontBroadcast)
+{
+    int client = GetClientOfUserId(event.GetInt("userid"));
+    int victim = GetClientOfUserId(event.GetInt("subject"));
+    bool bValidClient;
+    bool bValidVictim;
+   
+    if (client > 0 && client <= MaxClients && IsClientInGame(client))
+    {
+        bValidClient = true;
+    }
+    if (victim > 0 && victim <= MaxClients && IsClientInGame(victim))
+    {
+        bValidVictim = true;
+    }
+    if (bValidVictim && bValidClient)
+    {
+        Roll_EyeForAnEye(client, victim);
+    }
+}
+
+static Action Event_WitchKilledPost(Event event, const char[] name, bool bDontBroadcast)
+{
+    bool bCrowned = event.GetBool("oneshot");
+    int client = GetClientOfUserId(event.GetInt("userid"));
+    if(client > 0 && client <= MaxClients && IsClientInGame(client))
+    {
+        Roll_WitchRevenge(client, bCrowned);
     }
 }
