@@ -3,7 +3,7 @@ static ConVar cvar;
 void Setup_InsultToInjury()
 {
     HookEvent("charger_carry_start", Event_ChargerCarryStartPost, EventHookMode_Post);
-    cvar = CreateConVar("chaos_insult_injury_chance", "0.50", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+    cvar = CreateChanceConVar("chaos_insult_injury", "0.50");
 }
 
 

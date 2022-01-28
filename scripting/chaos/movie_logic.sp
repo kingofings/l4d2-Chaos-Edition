@@ -4,7 +4,7 @@ static bool g_bMovieActive[MAXPLAYERS + 1] = false;
 
 void Setup_MovieLogic()
 {
-    cvar = CreateConVar("chaos_movie_logic", "0.01", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+   cvar = CreateChanceConVar("chaos_movie_logic", "0.01");
 }
 
 void Roll_MovieLogic(int client, const char[] weapon)

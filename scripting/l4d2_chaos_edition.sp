@@ -18,12 +18,15 @@
 #define ZC_CHARGER 6
 #define ZC_WITCH 7
 #define ZC_TANK 8
+#define SOUND_METAL_MARIO "kingo_chaos_edition/metal_mario.mp3"
 
+#include <chaos/setup.sp>
 #include <chaos/generic_events.sp>
 #include <chaos/groovy.sp>
 #include <chaos/movie_logic.sp>
 #include <chaos/insult_to_injury.sp>
 #include <chaos/suppressive_fire.sp>
+#include <chaos/metal_mario.sp>
 
 public Plugin myinfo = 
 {
@@ -41,12 +44,27 @@ public void OnPluginStart()
     Setup_MovieLogic();
     Setup_InsultToInjury();
     Setup_SuppressiveFire();
+    Setup_MetalMario();
+}
+
+public void OnMapStart()
+{
+    //Precache
+    
+    //Sound Precache
+    PrecacheSound(SOUND_METAL_MARIO);
+    
+    //Download Table
+    
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/metal_mario.mp3");
 }
 
 public void OnClientPutInServer(int client)
 {
     Reset_MovieLogic(client);
     Reset_SuppressiveFire(client);
+    Reset_MetalMario(client);
+    SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
@@ -54,4 +72,17 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
     if (!IsPlayerAlive(client))return;
     
     if (IsSuppressiveFireActive(client))buttons |= IN_ATTACK;
+}
+
+static Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damageType, int &weapon, float damageForce[3], float damagePosition[3], int damageCustom)
+{
+    if (victim > 0 && victim <= MaxClients)
+    {
+        if(IsPlayerMetalMario(victim))
+        {
+            damage = 0.0;
+            return Plugin_Changed;
+        }
+    }
+    return Plugin_Continue;
 }

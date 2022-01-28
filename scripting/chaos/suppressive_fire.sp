@@ -3,7 +3,7 @@ static bool g_bSuppressiveFire[MAXPLAYERS + 1] = false;
 
 void Setup_SuppressiveFire()
 {
-    cvar = CreateConVar("chaos_suppressive_fire", "0.02", "Chance is %", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+    cvar = CreateChanceConVar("chaos_suppressive_fire", "0.02");
 }
 
 void Roll_SuppressiveFire(int client, const char[] weapon)
@@ -27,11 +27,6 @@ void Roll_SuppressiveFire(int client, const char[] weapon)
 		SDKHook(client, SDKHook_WeaponSwitch, WeaponSwitchSuppressiveFire);
 		PrintHintText(client, "Suppressive fire!");
 	}
-}
-
-void End_SuppressiveFire(int client)
-{
-    if (g_bSuppressiveFire[client])g_bSuppressiveFire[client] = false;	
 }
 
 static Action WeaponSwitchSuppressiveFire(int client)

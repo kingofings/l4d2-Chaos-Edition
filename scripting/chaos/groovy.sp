@@ -3,7 +3,7 @@ static ConVar cvar_chainsawAmmo;
 
 void Setup_Groovy()
 {
-    cvar = CreateConVar("chaos_groovy_chance", "0.10", "Chance is percentage", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+    cvar = CreateChanceConVar("chaos_groovy", "0.10");
     cvar_chainsawAmmo = FindConVar("ammo_chainsaw_max");
 }
 
