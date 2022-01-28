@@ -87,7 +87,7 @@ static void Event_ReviveEndPost(Event event, const char[] name, bool bDontBroadc
     }
 }
 
-static Action Event_WitchKilledPost(Event event, const char[] name, bool bDontBroadcast)
+static void Event_WitchKilledPost(Event event, const char[] name, bool bDontBroadcast)
 {
     bool bCrowned = event.GetBool("oneshot");
     int client = GetClientOfUserId(event.GetInt("userid"));
