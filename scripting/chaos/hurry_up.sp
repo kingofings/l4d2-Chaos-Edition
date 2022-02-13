@@ -149,8 +149,7 @@ bool HurryUp_IgnoreOtherEffects()
 
 bool HurryUp_TimerExpired()
 {
-    if (HurryUp_IsActive())return false;
-    if (g_time <= 0)return true;
+    if (HurryUp_IsActive() && g_time <= 0)return true;
     
     return false;
 }
