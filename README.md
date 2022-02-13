@@ -27,6 +27,7 @@ This mod is basically my training for coding in sourcepawn, some parts of the co
 - Tank Cars! Chance for tanks to throw cars.
 - [WIP] Demolition Man! Chance to spawn additional pipebombs when using one.
 - Throw yourself! Swap places with your pipebomb!
+- [WIP] HURRY UP!!
 
 # Dependencies
 

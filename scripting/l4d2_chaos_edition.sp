@@ -21,6 +21,8 @@
 
 #define SOUND_METAL_MARIO "kingo_chaos_edition/metal_mario.mp3"
 #define SOUND_HEALTH_ROULETTE "kingo_chaos_edition/health_roulette.mp3"
+#define SOUND_HURRY_UP_BUILDUP "kingo_chaos_edition/hurry_up_buildup.mp3"
+#define SOUND_HURRY_UP_LOOP "kingo_chaos_edition/hurry_up_loop.mp3"
 
 #include <chaos/setup.sp>
 #include <chaos/sdkcalls.sp>
@@ -33,6 +35,7 @@
 #include <chaos/health_roulette.sp>
 #include <chaos/eye_for_an_eye.sp>
 #include <chaos/witch_revenge.sp>
+#include <chaos/hurry_up.sp>
 
 public Plugin myinfo = 
 {
@@ -57,6 +60,7 @@ public void OnPluginStart()
     Setup_HealthRoulette();
     Setup_EyeForAnEye();
     Setup_WitchRevenge();
+    Setup_HurryUp();
     delete hGameConf;
 }
 
@@ -67,11 +71,22 @@ public void OnMapStart()
     //Sound Precache
     PrecacheSound(SOUND_METAL_MARIO);
     PrecacheSound(SOUND_HEALTH_ROULETTE);
+    PrecacheSound(SOUND_HURRY_UP_BUILDUP);
+    PrecacheSound(SOUND_HURRY_UP_LOOP);
     
     //Download Table
     
     AddFileToDownloadsTable("sound/kingo_chaos_edition/metal_mario.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_buildup.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_loop.mp3");
+    
+    Reset_HurryUp();
+}
+
+public void OnGameFrame()
+{
+    HurryUp_Loop();
 }
 
 public void OnClientPutInServer(int client)

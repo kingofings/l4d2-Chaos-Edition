@@ -7,6 +7,7 @@ void Setup_GenericEvents()
     HookEvent("pills_used", Event_PillsUsedPost, EventHookMode_Post);
     HookEvent("revive_end", Event_ReviveEndPost, EventHookMode_Post);
     HookEvent("witch_killed", Event_WitchKilledPost, EventHookMode_Post);
+    HookEvent("door_open", Event_DoorOpenPost, EventHookMode_Post);
 }
 
 static void Event_WeaponFirePost(Event event, const char[] name, bool bDontBroadcast)
@@ -52,7 +53,9 @@ static void Event_Reset(Event event, const char[] name, bool bDontBroadcast)
         Reset_MovieLogic(i);
         Reset_SuppressiveFire(i);
         Reset_MetalMario(i);
+        Silence_HurryUp(i);
     }
+    Reset_HurryUp();
     PrintToServer("[CHAOS] Reset Global Variables of all Players");    
 }
 
@@ -94,5 +97,14 @@ static void Event_WitchKilledPost(Event event, const char[] name, bool bDontBroa
     if(client > 0 && client <= MaxClients && IsClientInGame(client))
     {
         Roll_WitchRevenge(client, bCrowned);
+    }
+}
+
+static void Event_DoorOpenPost(Event event, const char[] name, bool bDontBroadcast)
+{
+    bool bCheckPoint = event.GetBool("checkpoint");
+    if (bCheckPoint)
+    {
+        Roll_HurryUp();
     }
 }
