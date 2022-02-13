@@ -8,10 +8,13 @@ void Setup_GenericEvents()
     HookEvent("revive_end", Event_ReviveEndPost, EventHookMode_Post);
     HookEvent("witch_killed", Event_WitchKilledPost, EventHookMode_Post);
     HookEvent("door_open", Event_DoorOpenPost, EventHookMode_Post);
+    HookEvent("charger_carry_start", Event_ChargerCarryStartPost, EventHookMode_Post);
 }
 
 static void Event_WeaponFirePost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     int client = GetClientOfUserId(event.GetInt("userid"));
     char weapon[64];
     event.GetString("weapon", weapon, sizeof(weapon));
@@ -24,6 +27,8 @@ static void Event_WeaponFirePost(Event event, const char[] name, bool bDontBroad
 
 static void Event_PlayerDeathPost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     int victim = GetClientOfUserId(event.GetInt("userid"));
     int attacker = GetClientOfUserId(event.GetInt("attacker"));
     bool bValidVictim;
@@ -61,6 +66,8 @@ static void Event_Reset(Event event, const char[] name, bool bDontBroadcast)
 
 static void Event_PillsUsedPost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     int client = GetClientOfUserId(event.GetInt("subject"));
     if(client > 0 && client <= MaxClients && IsClientInGame(client))
     {
@@ -71,6 +78,8 @@ static void Event_PillsUsedPost(Event event, const char[] name, bool bDontBroadc
 
 static void Event_ReviveEndPost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     int client = GetClientOfUserId(event.GetInt("userid"));
     int victim = GetClientOfUserId(event.GetInt("subject"));
     bool bValidClient;
@@ -92,6 +101,8 @@ static void Event_ReviveEndPost(Event event, const char[] name, bool bDontBroadc
 
 static void Event_WitchKilledPost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     bool bCrowned = event.GetBool("oneshot");
     int client = GetClientOfUserId(event.GetInt("userid"));
     if(client > 0 && client <= MaxClients && IsClientInGame(client))
@@ -102,9 +113,22 @@ static void Event_WitchKilledPost(Event event, const char[] name, bool bDontBroa
 
 static void Event_DoorOpenPost(Event event, const char[] name, bool bDontBroadcast)
 {
+    if (HurryUp_IgnoreOtherEffects())return;
+    
     bool bCheckPoint = event.GetBool("checkpoint");
     if (bCheckPoint)
     {
         Roll_HurryUp();
+    }
+}
+
+static void Event_ChargerCarryStartPost(Event event, const char[] name, bool dontBroadcast)
+{
+    if (HurryUp_IgnoreOtherEffects())return;
+    
+    int victim = GetClientOfUserId(event.GetInt("victim"));
+    if(victim > 0 && victim <= MaxClients && IsClientInGame(victim))
+    {
+        Roll_InsultToInjury(victim);
     }
 }

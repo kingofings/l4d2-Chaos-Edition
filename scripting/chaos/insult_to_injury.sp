@@ -2,22 +2,19 @@ static ConVar cvar;
 
 void Setup_InsultToInjury()
 {
-    HookEvent("charger_carry_start", Event_ChargerCarryStartPost, EventHookMode_Post);
+    
     cvar = CreateChanceConVar("chaos_insult_injury", "0.50");
 }
 
-
-static void Event_ChargerCarryStartPost(Event event, const char[] name, bool dontBroadcast)
+void Roll_InsultToInjury(int client)
 {
-	float chance = GetRandomFloat(0.0, 1.0);
-	if(cvar.FloatValue == 1.0 || cvar.FloatValue > chance)
-	{
-		int victim = GetClientOfUserId(event.GetInt("victim"));
-		if(victim > 0 && victim <= MaxClients && IsClientInGame(victim) && IsPlayerAlive(victim))
-		{
-			SDKHook(victim, SDKHook_OnTakeDamage, OnTakeDamageInsultToInjury);
-		}
-	}
+    if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
+    {
+        if (IsPlayerAlive(client))
+        {
+            SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamageInsultToInjury);
+        }
+    }
 }
 
 static Action OnTakeDamageInsultToInjury(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)

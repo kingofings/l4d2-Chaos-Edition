@@ -87,6 +87,13 @@ public void OnMapStart()
 public void OnGameFrame()
 {
     HurryUp_Loop();
+    if (HurryUp_TimerExpired())
+    {
+       for (int i = 1 ; i <= MaxClients ; i++)
+        {
+            if (GetClientTeam(i) == TEAM_SURVIVOR)HurryUp_DrainHealth(i);
+        } 
+    }
 }
 
 public void OnClientPutInServer(int client)

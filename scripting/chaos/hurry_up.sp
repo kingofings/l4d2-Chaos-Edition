@@ -5,12 +5,13 @@ static float g_flHurryUpLoopTime;
 static int g_time;
 static ConVar cvar;
 static ConVar cvar_duration;
-static Handle g_HurryUpTimer = null;
+static ConVar cvar_ignore;
 
 void Setup_HurryUp()
 {
     cvar = CreateChanceConVar("chaos_hurry_up", "0.15");
     cvar_duration = CreateConVar("chaos_hurry_up_drain", "15.0", "Amount in seconds it takes to drain health", FCVAR_NOTIFY, true, 0.0);
+    cvar_ignore = CreateConVar("chaos_hurry_up_ignore", "1", "Disable any other effects while hurry up is active", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 }
 
 void Roll_HurryUp()
@@ -23,7 +24,7 @@ void Roll_HurryUp()
         int minutes = GetRandomInt(5, 8);
         int seconds = GetRandomInt(0, 59);
         g_time = (minutes * 60) + seconds;
-        g_HurryUpTimer = CreateTimer(1.0, Timer_HurryUp, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+        CreateTimer(1.0, Timer_HurryUp, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
         PrintHintTextToAll("%i:%02i", g_time / 60, g_time % 60);
     }
     g_rolled = true;
@@ -31,27 +32,34 @@ void Roll_HurryUp()
 
 static Action Timer_HurryUp(Handle timer)
 {
-    if(!g_bHurryUp)
+    if(!g_bHurryUp || g_time <= 0)
     {
-        KillTimer(g_HurryUpTimer);
-        g_HurryUpTimer = null;
         return Plugin_Stop;
-    }
-    if(g_time <= 0)
-    {
-        for (int i = 1 ; i <= MaxClients ; i++)
-        {
-            if (IsClientInGame(i))SDKHook(i, SDKHook_PreThink, OnPreThink);
-        }
     }
     g_time--;
     PrintHintTextToAll("%i:%02i", g_time / 60, g_time % 60);
+    // TODO Make Wario scream Hurry up! every minute!
+    /*if (g_time % 60 == 0)
+    {
+        for (int i = 1 ; i <= MaxClients ; i++)
+        {
+            if (IsClientInGame(i) && !IsFakeClient(i))
+            {
+                switch(GetRandomInt(0, 5);)
+                {
+                    case 1:
+                    {
+                        //will do for now...
+                        for (int j = 1 ; j <= 3; j++)
+                        {
+                            EmitSoundToClient(i, SOUND_WARIO_HURRY_UP, i, 100 + j, SNDLEVEL_AIRCRAFT, _, 1.0, _, _, _, _, _, _);
+                        }
+                    }
+                }
+            }
+        }
+    }*/
     return Plugin_Continue;
-}
-
-static Action OnPreThink(int client)
-{
-    HurryUp_DrainHealth(client);
 }
 
 void HurryUp_Loop()
@@ -95,7 +103,7 @@ void HurryUp_DrainHealth(int client)
 {
     if (!IsPlayerAlive(client))return;
     float flBuffer = GetEntPropFloat(client, Prop_Send, "m_healthBuffer");
-    if (flBuffer != 0.0)
+    if (flBuffer > 0.0)
     {
         flBuffer -= GetGameFrameTime() * cvar_duration.FloatValue;
         if (flBuffer < 0.0)SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
@@ -105,10 +113,10 @@ void HurryUp_DrainHealth(int client)
     {
         float flHealth = float(GetEntProp(client, Prop_Send, "m_iHealth"));
         
-        if(flHealth >= 1.0)
+        if(flHealth > 0.0)
         {
             flHealth -= GetGameFrameTime() * cvar_duration.FloatValue;
-            int iHealth = RoundToFloor(flHealth);
+            int iHealth = RoundToNearest(flHealth);
             if (iHealth <= 1)SlapPlayer(client, 100, false);
             else SetEntProp(client, Prop_Send, "m_iHealth", iHealth);
         }
@@ -121,15 +129,6 @@ void Reset_HurryUp()
     g_bHurryUpBuildUp = false;
     g_flHurryUpLoopTime = 0.0;
     g_time = 0;
-    if(g_HurryUpTimer != null)
-    {
-        KillTimer(g_HurryUpTimer);
-        g_HurryUpTimer = null;
-    }
-    for (int i = 1 ; i <= MaxClients ; i++)
-    {
-        if (IsClientInGame(i))SDKUnhook(i, SDKHook_PreThink, OnPreThink);
-    }
 }
 
 void Silence_HurryUp(int client)
@@ -139,4 +138,24 @@ void Silence_HurryUp(int client)
         StopSound(client, 100 + i, SOUND_HURRY_UP_LOOP);
         StopSound(client, 100 + i, SOUND_HURRY_UP_BUILDUP);
     }
+}
+
+bool HurryUp_IgnoreOtherEffects()
+{
+    if (g_bHurryUp)return cvar_ignore.BoolValue;
+    
+    return false;
+}
+
+bool HurryUp_TimerExpired()
+{
+    if (HurryUp_IsActive())return false;
+    if (g_time <= 0)return true;
+    
+    return false;
+}
+
+bool HurryUp_IsActive()
+{
+    return g_bHurryUp;
 }
