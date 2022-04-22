@@ -1,4 +1,19 @@
+# ---> SourceMod
+# Ignore compiled SourceMod plugins and includes
 
 *.inc
 *.smx
-*.exe
+
+# Ignore ninja build stuff
+# (These should be handled with configure.py)
+**/__pycache__
+build/
+build.ninja
+
+# Ignore personal configuration files copied from contrib
+/modd.conf
+/uploader.ini
+
+# Ignore sm compiler
+
+spcomp.exe

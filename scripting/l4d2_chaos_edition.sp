@@ -24,18 +24,19 @@
 #define SOUND_HURRY_UP_BUILDUP "kingo_chaos_edition/hurry_up_buildup.mp3"
 #define SOUND_HURRY_UP_LOOP "kingo_chaos_edition/hurry_up_loop.mp3"
 
-#include <chaos/setup.sp>
-#include <chaos/sdkcalls.sp>
-#include <chaos/generic_events.sp>
-#include <chaos/groovy.sp>
-#include <chaos/movie_logic.sp>
-#include <chaos/insult_to_injury.sp>
-#include <chaos/suppressive_fire.sp>
-#include <chaos/metal_mario.sp>
-#include <chaos/health_roulette.sp>
-#include <chaos/eye_for_an_eye.sp>
-#include <chaos/witch_revenge.sp>
-#include <chaos/hurry_up.sp>
+//never had this issue but spcomp is looking for include/chaos which is wrong
+#include <../chaos/setup.sp>
+#include <../chaos/sdkcalls.sp>
+#include <../chaos/generic_events.sp>
+#include <../chaos/groovy.sp>
+#include <../chaos/movie_logic.sp>
+#include <../chaos/insult_to_injury.sp>
+#include <../chaos/suppressive_fire.sp>
+#include <../chaos/metal_mario.sp>
+#include <../chaos/health_roulette.sp>
+#include <../chaos/eye_for_an_eye.sp>
+#include <../chaos/witch_revenge.sp>
+#include <../chaos/hurry_up.sp>
 
 public Plugin myinfo = 
 {
