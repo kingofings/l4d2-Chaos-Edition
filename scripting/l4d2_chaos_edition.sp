@@ -23,6 +23,11 @@
 #define SOUND_HEALTH_ROULETTE "kingo_chaos_edition/health_roulette.mp3"
 #define SOUND_HURRY_UP_BUILDUP "kingo_chaos_edition/hurry_up_buildup.mp3"
 #define SOUND_HURRY_UP_LOOP "kingo_chaos_edition/hurry_up_loop.mp3"
+#define VOICE_HURRY_UP_1 "kingo_chaos_edition/voice/wario/hurry_up1.mp3"
+#define VOICE_HURRY_UP_2 "kingo_chaos_edition/voice/wario/hurry_up2.mp3"
+#define VOICE_HURRY_UP_3 "kingo_chaos_edition/voice/wario/hurry_up3.mp3"
+#define VOICE_HURRY_UP_4 "kingo_chaos_edition/voice/wario/hurry_up4.mp3"
+#define VOICE_HURRY_UP_5 "kingo_chaos_edition/voice/wario/hurry_up5.mp3"
 
 #include <chaos/setup.sp>
 #include <chaos/sdkcalls.sp>
@@ -73,6 +78,11 @@ public void OnMapStart()
     PrecacheSound(SOUND_HEALTH_ROULETTE);
     PrecacheSound(SOUND_HURRY_UP_BUILDUP);
     PrecacheSound(SOUND_HURRY_UP_LOOP);
+    PrecacheSound(VOICE_HURRY_UP_1);
+    PrecacheSound(VOICE_HURRY_UP_2);
+    PrecacheSound(VOICE_HURRY_UP_3);
+    PrecacheSound(VOICE_HURRY_UP_4);
+    PrecacheSound(VOICE_HURRY_UP_5);
     
     //Download Table
     
@@ -80,6 +90,11 @@ public void OnMapStart()
     AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_buildup.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_loop.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up1.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up2.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3");
     
     Reset_HurryUp();
 }
@@ -91,6 +106,7 @@ public void OnGameFrame()
     {
        for (int i = 1 ; i <= MaxClients ; i++)
         {
+            if (!IsClientInGame(i))return;
             if (GetClientTeam(i) == TEAM_SURVIVOR)HurryUp_DrainHealth(i);
         } 
     }

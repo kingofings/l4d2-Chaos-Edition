@@ -8,11 +8,16 @@ plugins = [
 # files to copy to builddir, relative to root
 # plugin names from previous list will be copied automatically
 copy_files = [
-    'gamedata/l4d2.chaos.txt',
     'assets/sound/kingo_chaos_edition/metal_mario.mp3',
     'assets/sound/kingo_chaos_edition/health_roulette.mp3',
     'assets/sound/kingo_chaos_edition/hurry_up_buildup.mp3',
     'assets/sound/kingo_chaos_edition/hurry_up_loop.mp3',
+    'assets/sound/kingo_chaos_edition/voice/wario/hurry_up1.mp3',
+    'assets/sound/kingo_chaos_edition/voice/wario/hurry_up2.mp3',
+    'assets/sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3',
+    'assets/sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3',
+    'assets/sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3',
+    'gamedata/l4d2.chaos.txt',
 ]
 
 # additional directories for sourcepawn include lookup
