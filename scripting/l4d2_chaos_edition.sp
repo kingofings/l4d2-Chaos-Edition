@@ -108,9 +108,11 @@ public void OnClientPutInServer(int client)
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
 {
-    if (!IsPlayerAlive(client))return;
+    if (!IsPlayerAlive(client))return Plugin_Continue;
     
     if (IsSuppressiveFireActive(client))buttons |= IN_ATTACK;
+    
+    return Plugin_Continue;
 }
 
 static Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damageType, int &weapon, float damageForce[3], float damagePosition[3], int damageCustom)
@@ -142,6 +144,7 @@ static Action OnStartTouch(int entity, int client)
             }
         }
     }
+    return Plugin_Continue;
 }
 
 public void OnEntityCreated(int entity, const char[] class)

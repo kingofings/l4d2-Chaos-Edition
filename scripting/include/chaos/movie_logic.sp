@@ -1,6 +1,6 @@
 static ConVar cvar;
-static float g_flTimeMovie[MAXPLAYERS + 1] = 0.0;
-static bool g_bMovieActive[MAXPLAYERS + 1] = false;
+static float g_flTimeMovie[MAXPLAYERS + 1] = {0.0, ...};
+static bool g_bMovieActive[MAXPLAYERS + 1] = {false, ...};
 
 void Setup_MovieLogic()
 {

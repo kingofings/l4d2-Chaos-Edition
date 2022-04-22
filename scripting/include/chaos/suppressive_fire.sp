@@ -1,5 +1,5 @@
 static ConVar cvar;
-static bool g_bSuppressiveFire[MAXPLAYERS + 1] = false;
+static bool g_bSuppressiveFire[MAXPLAYERS + 1] = {false, ...};
 
 void Setup_SuppressiveFire()
 {
