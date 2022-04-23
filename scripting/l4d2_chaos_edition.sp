@@ -23,6 +23,8 @@
 #define SOUND_HEALTH_ROULETTE "kingo_chaos_edition/health_roulette.mp3"
 #define SOUND_HURRY_UP_BUILDUP "kingo_chaos_edition/hurry_up_buildup.mp3"
 #define SOUND_HURRY_UP_LOOP "kingo_chaos_edition/hurry_up_loop.mp3"
+#define SOUND_HURRY_UP_10_SECONDS "kingo_chaos_edition/hurry_up_10_seconds.mp3"
+#define SOUND_HURRY_UP_NO_TIME "kingo_chaos_edition/hurry_up_no_time.mp3"
 #define VOICE_HURRY_UP_1 "kingo_chaos_edition/voice/wario/hurry_up1.mp3"
 #define VOICE_HURRY_UP_2 "kingo_chaos_edition/voice/wario/hurry_up2.mp3"
 #define VOICE_HURRY_UP_3 "kingo_chaos_edition/voice/wario/hurry_up3.mp3"
@@ -31,6 +33,7 @@
 
 #include <chaos/setup.sp>
 #include <chaos/sdkcalls.sp>
+#include <chaos/sdkhooks.sp>
 #include <chaos/generic_events.sp>
 #include <chaos/groovy.sp>
 #include <chaos/movie_logic.sp>
@@ -66,7 +69,13 @@ public void OnPluginStart()
     Setup_EyeForAnEye();
     Setup_WitchRevenge();
     Setup_HurryUp();
+    
     delete hGameConf;
+    
+    for (int i = 1 ; i <= MaxClients ; ++i)
+    {
+        if (IsClientInGame(i))OnClientPutInServer(i);
+    }
 }
 
 public void OnMapStart()
@@ -83,6 +92,8 @@ public void OnMapStart()
     PrecacheSound(VOICE_HURRY_UP_3);
     PrecacheSound(VOICE_HURRY_UP_4);
     PrecacheSound(VOICE_HURRY_UP_5);
+    PrecacheSound(SOUND_HURRY_UP_10_SECONDS);
+    PrecacheSound(SOUND_HURRY_UP_NO_TIME);
     
     //Download Table
     
@@ -90,12 +101,17 @@ public void OnMapStart()
     AddFileToDownloadsTable("sound/kingo_chaos_edition/health_roulette.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_buildup.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_loop.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_10_seconds.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/hurry_up_no_time.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up1.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up2.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3");
-    
+}
+
+public void OnMapEnd()
+{
     Reset_HurryUp();
 }
 
@@ -117,9 +133,7 @@ public void OnClientPutInServer(int client)
     Reset_MovieLogic(client);
     Reset_SuppressiveFire(client);
     Reset_MetalMario(client);
-    SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
-    SDKHook(client, SDKHook_StartTouch, OnStartTouch);
-    SDKHook(client, SDKHook_Touch, OnStartTouch);
+    SetupSKDHooks(client);
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
@@ -128,38 +142,6 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float veloc
     
     if (IsSuppressiveFireActive(client))buttons |= IN_ATTACK;
     
-    return Plugin_Continue;
-}
-
-static Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damageType, int &weapon, float damageForce[3], float damagePosition[3], int damageCustom)
-{
-    if (victim > 0 && victim <= MaxClients)
-    {
-        if(IsPlayerMetalMario(victim) && damageType & ~DMG_FALL)
-        {
-            damage = 0.0;
-            return Plugin_Changed;
-        }
-    }
-    return Plugin_Continue;
-}
-
-static Action OnStartTouch(int entity, int client)
-{
-    if(client > 0 && client <= MaxClients)
-    {
-        if(IsPlayerMetalMario(client))
-        {
-            if (entity > MaxClients)
-            {
-                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);
-            }
-            else if (GetClientTeam(entity) != GetClientTeam(client))
-            {
-                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);  
-            }
-        }
-    }
     return Plugin_Continue;
 }
 

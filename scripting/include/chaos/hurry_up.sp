@@ -3,8 +3,9 @@
 static bool g_rolled;
 static bool g_bHurryUp;
 static bool g_bHurryUpBuildUp;
+static bool g_bHurryUpNoTime;
 static float g_flHurryUpLoopTime;
-static float g_flDrainedHealth[MAXPLAYERS + 1];
+static float g_flDrainedHealth;
 static int g_time;
 static ConVar cvar;
 static ConVar cvar_duration;
@@ -40,16 +41,46 @@ static Action Timer_HurryUp(Handle timer)
         return Plugin_Stop;
     }
     g_time--;
+    if (g_time <= 0)
+    {
+        for (int i = 1 ; i <= MaxClients ; i++)
+        {
+            if (IsClientInGame(i))Silence_HurryUp(i);
+        }
+        g_bHurryUpNoTime = true;
+        g_flHurryUpLoopTime = GetGameTime();
+    }
     PrintHintTextToAll("%i:%02i", g_time / 60, g_time % 60);
     //Make Wario scream Hurry up! every minute!
-    if (g_time % 60 == 0 && g_time != 0)
+    char hurryUp[128];
+    int RNG = GetRandomInt(1, 5);
+    Format(hurryUp, sizeof(hurryUp), "kingo_chaos_edition/voice/wario/hurry_up%i.mp3", RNG);
+    
+    if (g_time == 10)
     {
-        char hurryUp[128];
-        int RNG = GetRandomInt(1, 5);
-        Format(hurryUp, sizeof(hurryUp), "kingo_chaos_edition/voice/wario/hurry_up%i.mp3", RNG);
+        for (int i = 1 ; i <= 3 ; i++)
+        {
+            EmitSoundToAll(SOUND_HURRY_UP_10_SECONDS, _, 106 + i, SNDLEVEL_AIRCRAFT);
+        }
+    }
+    if (g_time % 60 == 0 && g_time >= 60)
+    {
         for (int i = 1 ; i <= 3 ; i++)
         {
             EmitSoundToAll(hurryUp, _, 103 + i, SNDLEVEL_AIRCRAFT);
+        }
+    }
+    else
+    {
+        switch (g_time)
+        {
+            case 45, 30, 15, 0:
+            {
+                for (int i = 1 ; i <= 3 ; i++)
+                {
+                    EmitSoundToAll(hurryUp, _, 103 + i, SNDLEVEL_AIRCRAFT);
+                }
+            }
         }
     }
     return Plugin_Continue;
@@ -62,15 +93,9 @@ void HurryUp_Loop()
     
     if (!g_bHurryUpBuildUp)
     {
-        for (int i = 1 ; i <= MaxClients ; i++)
+        for (int i = 1 ; i <= 3 ; i++)
         {
-            if (IsClientInGame(i) && !IsFakeClient(i))
-            {
-                for (int j = 1 ; j <= 3 ; j++)
-                {
-                    EmitSoundToAll(SOUND_HURRY_UP_BUILDUP, _, 100 + j, SNDLEVEL_AIRCRAFT);
-                }
-            }
+            EmitSoundToAll(SOUND_HURRY_UP_BUILDUP, _, 100 + i, SNDLEVEL_AIRCRAFT);
         }
         g_flHurryUpLoopTime = GetGameTime() + 118.524;
         g_bHurryUpBuildUp = true;
@@ -78,17 +103,22 @@ void HurryUp_Loop()
     
     if (GetGameTime() > g_flHurryUpLoopTime)
     {
-        for (int i = 1 ; i <= MaxClients ; i++)
+        if (g_bHurryUpNoTime)
         {
-            if (IsClientInGame(i) && !IsFakeClient(i))
+            for (int i = 1 ; i <= 3 ; i++)
             {
-                for (int j = 1 ; j <= 3 ; j++)
-                {
-                    EmitSoundToAll(SOUND_HURRY_UP_LOOP, _, 100 + j, SNDLEVEL_AIRCRAFT);
-                }
+                EmitSoundToAll(SOUND_HURRY_UP_NO_TIME, _, 100 + i, SNDLEVEL_AIRCRAFT);
             }
+            g_flHurryUpLoopTime = GetGameTime() + 16.090;
         }
-        g_flHurryUpLoopTime = GetGameTime() + 34.708;
+        else
+        {
+            for (int i = 1 ; i <= 3 ; i++)
+            {
+            EmitSoundToAll(SOUND_HURRY_UP_LOOP, _, 100 + i, SNDLEVEL_AIRCRAFT);
+            }
+            g_flHurryUpLoopTime = GetGameTime() + 34.708;
+        }
     }
 }
 
@@ -99,7 +129,6 @@ void HurryUp_DrainHealth(int client)
     if (flBuffer > 0.0)
     {
         flBuffer -= GetGameFrameTime() / (cvar_duration.FloatValue / 100.0);
-        PrintToServer("Buffer %N: %0.2f", client, flBuffer);
         if (flBuffer < 0.0)SetEntPropFloat(client, Prop_Send, "m_healthBuffer", 0.0);
         else SetEntPropFloat(client, Prop_Send, "m_healthBuffer", flBuffer);
     }
@@ -109,13 +138,12 @@ void HurryUp_DrainHealth(int client)
         
         if(iHealth > 0)
         {
-            g_flDrainedHealth[client] += (GetGameFrameTime() / (cvar_duration.FloatValue / 100.0));
-            if (g_flDrainedHealth[client] >= 1.0)
+            g_flDrainedHealth += (GetGameFrameTime() / (cvar_duration.FloatValue / 100.0));
+            if (g_flDrainedHealth >= 1.0)
             {
-                PrintToServer("Health %N: %i", client, iHealth);
-                if (iHealth <= 1)SlapPlayer(client, 100, false);
-                else SetEntProp(client, Prop_Send, "m_iHealth", RoundToNearest(iHealth - g_flDrainedHealth[client]));
-                g_flDrainedHealth[client]--;
+                if (iHealth <= 1)IncapPlayer(client);
+                else SetEntProp(client, Prop_Send, "m_iHealth", RoundToNearest(iHealth - g_flDrainedHealth));
+                g_flDrainedHealth--;
             }
         }
     }
@@ -125,13 +153,10 @@ void Reset_HurryUp()
     g_rolled = false;
     g_bHurryUp = false;
     g_bHurryUpBuildUp = false;
+    g_bHurryUpNoTime = false;
     g_flHurryUpLoopTime = 0.0;
+    g_flDrainedHealth = 0.0;
     g_time = 0;
-    
-    for (int i = 1 ; i <= MaxClients ; i++)
-    {
-        g_flDrainedHealth[i] = 0.0;
-    }
 }
 
 void Silence_HurryUp(int client)

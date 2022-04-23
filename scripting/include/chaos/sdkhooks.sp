@@ -1,7 +1,39 @@
-Action OnStartTouch(int client, int entity)
+void SetupSKDHooks(int client)
 {
-    if(IsPlayerMetalMario(client))
+    SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+    SDKHook(client, SDKHook_StartTouch, OnStartTouch);
+    SDKHook(client, SDKHook_Touch, OnStartTouch);
+}
+
+
+static Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damageType, int &weapon, float damageForce[3], float damagePosition[3], int damageCustom)
+{
+    if (victim > 0 && victim <= MaxClients)
     {
-        SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);
+        if(IsPlayerMetalMario(victim) && damageType & ~DMG_FALL)
+        {
+            damage = 0.0;
+            return Plugin_Changed;
+        }
     }
+    return Plugin_Continue;
+}
+
+Action OnStartTouch(int entity, int client)
+{
+    if(client > 0 && client <= MaxClients)
+    {
+        if(IsPlayerMetalMario(client))
+        {
+            if (entity > MaxClients)
+            {
+                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);
+            }
+            else if (GetClientTeam(entity) != GetClientTeam(client))
+            {
+                SDKHooks_TakeDamage(entity, client, client, 150.0, DMG_CLUB, _, NULL_VECTOR, NULL_VECTOR);  
+            }
+        }
+    }
+    return Plugin_Continue;
 }

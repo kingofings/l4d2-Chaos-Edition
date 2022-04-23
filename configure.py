@@ -12,6 +12,8 @@ copy_files = [
     'assets/sound/kingo_chaos_edition/health_roulette.mp3',
     'assets/sound/kingo_chaos_edition/hurry_up_buildup.mp3',
     'assets/sound/kingo_chaos_edition/hurry_up_loop.mp3',
+    'assets/sound/kingo_chaos_edition/hurry_up_10_seconds.mp3',
+    'assets/sound/kingo_chaos_edition/hurry_up_no_time.mp3',
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up1.mp3',
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up2.mp3',
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3',
