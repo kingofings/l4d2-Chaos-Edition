@@ -30,6 +30,8 @@
 #define VOICE_HURRY_UP_3 "kingo_chaos_edition/voice/wario/hurry_up3.mp3"
 #define VOICE_HURRY_UP_4 "kingo_chaos_edition/voice/wario/hurry_up4.mp3"
 #define VOICE_HURRY_UP_5 "kingo_chaos_edition/voice/wario/hurry_up5.mp3"
+#define STARMAN_STARTUP "kingo_chaos_edition/sfx/starman_startup.mp3"
+#define STARMAN_LOOP "kingo_chaos_edition/sfx/starman_loop.mp3"
 
 #include <chaos/setup.sp>
 #include <chaos/sdkcalls.sp>
@@ -44,6 +46,7 @@
 #include <chaos/eye_for_an_eye.sp>
 #include <chaos/witch_revenge.sp>
 #include <chaos/hurry_up.sp>
+#include <chaos/starman-gnome.sp>
 
 public Plugin myinfo = 
 {
@@ -69,6 +72,7 @@ public void OnPluginStart()
     Setup_EyeForAnEye();
     Setup_WitchRevenge();
     Setup_HurryUp();
+    Setup_StarmanGnome();
     
     delete hGameConf;
     
@@ -94,6 +98,8 @@ public void OnMapStart()
     PrecacheSound(VOICE_HURRY_UP_5);
     PrecacheSound(SOUND_HURRY_UP_10_SECONDS);
     PrecacheSound(SOUND_HURRY_UP_NO_TIME);
+    PrecacheSound(STARMAN_STARTUP);
+    PrecacheSound(STARMAN_LOOP);
     
     //Download Table
     
@@ -108,6 +114,8 @@ public void OnMapStart()
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/sfx/starman_startup.mp3");
+    AddFileToDownloadsTable("sound/kingo_chaos_edition/sfx/starman_loop.mp3");
     
     char map[255];
     GetCurrentMap(map, sizeof(map));
@@ -128,7 +136,10 @@ public void OnGameFrame()
        for (int i = 1 ; i <= MaxClients ; i++)
         {
             if (!IsClientInGame(i))return;
-            if (GetClientTeam(i) == TEAM_SURVIVOR)HurryUp_DrainHealth(i);
+            if (GetClientTeam(i) == TEAM_SURVIVOR)
+            {
+                HurryUp_DrainHealth(i);
+            }
         } 
     }
 }
@@ -138,7 +149,7 @@ public void OnClientPutInServer(int client)
     Reset_MovieLogic(client);
     Reset_SuppressiveFire(client);
     Reset_MetalMario(client);
-    SetupSKDHooks(client);
+    SetupPlayerSDKHooks(client);
 }
 
 public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float velocity[3], float angles[3], int &weapon)
@@ -154,7 +165,6 @@ public void OnEntityCreated(int entity, const char[] class)
 {
     if(StrEqual(class, "infected", false))
     {
-        SDKHook(entity, SDKHook_StartTouch, OnStartTouch);
-        SDKHook(entity, SDKHook_Touch, OnStartTouch);
+        Setup_InfectedSDKHooks(entity);
     }
 }

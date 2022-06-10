@@ -9,6 +9,7 @@ void Setup_GenericEvents()
     HookEvent("witch_killed", Event_WitchKilledPost, EventHookMode_Post);
     HookEvent("door_open", Event_DoorOpenPost, EventHookMode_Post);
     HookEvent("charger_carry_start", Event_ChargerCarryStartPost, EventHookMode_Post);
+    HookEvent("item_pickup", Event_ItemPickupPost, EventHookMode_Post);
 }
 
 static void Event_WeaponFirePost(Event event, const char[] name, bool bDontBroadcast)
@@ -104,10 +105,17 @@ static void Event_WitchKilledPost(Event event, const char[] name, bool bDontBroa
     if (HurryUp_IgnoreOtherEffects())return;
     
     bool bCrowned = event.GetBool("oneshot");
-    int client = GetClientOfUserId(event.GetInt("userid"));
-    if(client > 0 && client <= MaxClients && IsClientInGame(client))
+    int attacker = GetClientOfUserId(event.GetInt("userid"));
+    int witch = event.GetInt("witchid");
+    
+    bool validAttacker, validWitch;
+    
+    if (attacker > 0 && attacker <= MaxClients)validAttacker = true;
+    if (IsValidEntity(witch))validWitch = true;
+
+    if (validAttacker && validWitch)
     {
-        Roll_WitchRevenge(client, bCrowned);
+        Roll_WitchRevenge(attacker, witch, bCrowned);
     }
 }
 
@@ -131,4 +139,14 @@ static void Event_ChargerCarryStartPost(Event event, const char[] name, bool don
     {
         Roll_InsultToInjury(victim);
     }
+}
+
+static void Event_ItemPickupPost(Event event, const char[] name, bool dontBroadcast)
+{
+    int client = GetClientOfUserId(event.GetInt("userid"));
+    if (!client)return;
+    char item[128];
+    event.GetString("item", item, sizeof(item));
+    
+    Roll_StarmanGnome(client, item);
 }

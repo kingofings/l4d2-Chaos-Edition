@@ -9,7 +9,7 @@ void Roll_HealthRoulette(int client)
 {
     if (IsPlayerAlive(client))
     {
-        if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
+        if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetURandomFloat())
         {
             DataPack pack;
             CreateDataTimer(0.1, Timer_HealthRoulette, pack, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
@@ -42,7 +42,7 @@ static Action Timer_HealthRoulette(Handle timer, DataPack pack)
         else
         {
             int iHealth = GetEntProp(client, Prop_Send, "m_iHealth");
-            float flBuffer = GetEntPropFloat(client, Prop_Send, "m_bufferHealth");
+            float flBuffer = GetEntPropFloat(client, Prop_Send, "m_healthBuffer");
             PrintHintText(client, "Permanent Health: %i. Temporary Health: %0.2f. Total health: %0.2f", iHealth, flBuffer, iHealth + flBuffer);
             return Plugin_Stop;
         }

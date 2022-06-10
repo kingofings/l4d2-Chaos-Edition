@@ -20,7 +20,7 @@ void Roll_SuppressiveFire(int client, const char[] weapon)
 		
 		return;
 	}
-	if(cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
+	if(cvar.FloatValue == 1.0 || cvar.FloatValue > GetURandomFloat())
 	{
 		if (!StrEqual(weapon, "rifle_m60"))return;
 		g_bSuppressiveFire[client] = true;

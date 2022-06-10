@@ -25,7 +25,7 @@ void Roll_HurryUp()
 {
     if (g_rolled)return;
     if (g_bHurryUp)return;
-    if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
+    if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetURandomFloat())
     {
         g_bHurryUp = true;
         int difficulty = HurryUp_GetDifficultyLevel();

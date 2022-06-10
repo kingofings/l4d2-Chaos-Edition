@@ -12,7 +12,7 @@ void Roll_MetalMario(int client)
 {
     if (IsPlayerAlive(client))
     {
-        if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
+        if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetURandomFloat())
         {
             g_bGodMode[client] = true;
             DataPack pack;
@@ -26,7 +26,6 @@ void Roll_MetalMario(int client)
             {
                 EmitSoundToAll(SOUND_METAL_MARIO, client, i, SNDLEVEL_GUNFIRE, _, 1.0, _, _, _, _, true, _);
             }
-            PrintHintText(client, "Metal Mario!");
         }
     }
 }
