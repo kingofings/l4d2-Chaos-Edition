@@ -19,6 +19,8 @@ copy_files = [
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3',
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3',
     'assets/sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3',
+    'assets/sound/kingo_chaos_edition/sfx/starman_startup.mp3',
+    'assets/sound/kingo_chaos_edition/sfx/starman_loop.mp3',
     'gamedata/l4d2.chaos.txt',
 ]
 
