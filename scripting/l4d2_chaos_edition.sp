@@ -108,6 +108,11 @@ public void OnMapStart()
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up3.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up4.mp3");
     AddFileToDownloadsTable("sound/kingo_chaos_edition/voice/wario/hurry_up5.mp3");
+    
+    char map[255];
+    GetCurrentMap(map, sizeof(map));
+    HurryUp_ParseKV(map);
+    Reset_HurryUp();
 }
 
 public void OnMapEnd()

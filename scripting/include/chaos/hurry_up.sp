@@ -1,5 +1,3 @@
-//TODO When the time runs out change the music to the 'coin loss' one also add clock sound effects when hitting 10 seconds
-// Also make wario say hurry up in 15 second increments in the last minute!
 static bool g_rolled;
 static bool g_bHurryUp;
 static bool g_bHurryUpBuildUp;
@@ -7,15 +5,20 @@ static bool g_bHurryUpNoTime;
 static float g_flHurryUpLoopTime;
 static float g_flDrainedHealth;
 static int g_time;
+static int g_normal_time;
+static int g_hard_time;
 static ConVar cvar;
 static ConVar cvar_duration;
 static ConVar cvar_ignore;
+static ConVar cvar_difficulty;
+
 
 void Setup_HurryUp()
 {
     cvar = CreateChanceConVar("chaos_hurry_up", "0.15");
     cvar_duration = CreateConVar("chaos_hurry_up_drain", "15.0", "Amount in seconds it takes to drain health", FCVAR_NOTIFY, true, 0.0);
     cvar_ignore = CreateConVar("chaos_hurry_up_ignore", "1", "Disable any other effects while hurry up is active", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+    cvar_difficulty = CreateConVar("chaos_hurry_up_difficulty", "1", "0 = Random, 1 = Normal, 2 = Hard", FCVAR_NOTIFY, true, 1.0, true, 2.0);
 }
 
 void Roll_HurryUp()
@@ -25,13 +28,23 @@ void Roll_HurryUp()
     if (cvar.FloatValue == 1.0 || cvar.FloatValue > GetRandomFloat(0.0, 1.0))
     {
         g_bHurryUp = true;
-        int minutes = GetRandomInt(4, 6);
-        int seconds = GetRandomInt(0, 59);
-        g_time = (minutes * 60) + seconds;
+        int difficulty = HurryUp_GetDifficultyLevel();
+        if (g_normal_time <= 0)difficulty = 2;
+        else if (g_hard_time <= 0)difficulty = 1;
+        switch (difficulty)
+        {
+            case 0:
+            {
+                if (GetRandomInt(1, 2) == 1)g_time = g_normal_time;
+                else g_time = g_hard_time;
+            }
+            case 1:g_time = g_normal_time;
+            case 2:g_time = g_hard_time;
+        }
         CreateTimer(1.0, Timer_HurryUp, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
         PrintHintTextToAll("%i:%02i", g_time / 60, g_time % 60);
     }
-    g_rolled = true;
+    HurryUp_SetStatus(true);
 }
 
 static Action Timer_HurryUp(Handle timer)
@@ -150,7 +163,7 @@ void HurryUp_DrainHealth(int client)
 }
 void Reset_HurryUp()
 {
-    g_rolled = false;
+    HurryUp_SetStatus(false);
     g_bHurryUp = false;
     g_bHurryUpBuildUp = false;
     g_bHurryUpNoTime = false;
@@ -165,6 +178,7 @@ void Silence_HurryUp(int client)
     {
         StopSound(client, 100 + i, SOUND_HURRY_UP_LOOP);
         StopSound(client, 100 + i, SOUND_HURRY_UP_BUILDUP);
+        StopSound(client, 100 + i, SOUND_HURRY_UP_NO_TIME);
     }
 }
 
@@ -185,4 +199,47 @@ bool HurryUp_TimerExpired()
 bool HurryUp_IsActive()
 {
     return g_bHurryUp;
+}
+
+/**
+* Purpose: Manually set it to rolled or unrolled.
+**/
+static void HurryUp_SetStatus(bool status)
+{
+    g_rolled = status;
+}
+
+static int HurryUp_GetDifficultyLevel()
+{
+    return cvar_difficulty.IntValue;
+}
+
+/**
+* Parse Map time config
+**/
+void HurryUp_ParseKV(const char[] mapName)
+{
+    char path[PLATFORM_MAX_PATH];
+    BuildPath(Path_SM, path, sizeof(path), "configs/chaos_hurryup.cfg");
+    if (!FileExists(path))SetFailState("Hurry up config file %s does not exist!", path);
+    
+    KeyValues kv = new KeyValues("chaos_hurryup");
+    if (!kv.ImportFromFile(path))SetFailState("Unable to parse KeyValues file %s", path);
+    if (!kv.JumpToKey(mapName))
+    {
+        LogMessage("[HURRY UP] Map has no config disabling hurry up roll!");
+        HurryUp_SetStatus(true);
+        delete kv;
+        return;
+    }
+    
+    g_normal_time = kv.GetNum("normal", 0);
+    g_hard_time = kv.GetNum("hard", 0);
+    if (g_normal_time <= 0 && g_hard_time <= 0)
+    {
+        LogMessage("[HURRY UP] No valid time values found please check your config!");
+        HurryUp_SetStatus(true);
+    }
+    
+    delete kv;
 }
